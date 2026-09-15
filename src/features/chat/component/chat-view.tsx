@@ -7,6 +7,7 @@ import {
   LoaderCircle,
   Menu,
   MessageSquare,
+  PlusIcon,
   RefreshCcwIcon,
   RotateCcw,
   Send,
@@ -18,6 +19,7 @@ import {
   InputEventHandler,
   memo,
   useCallback,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -357,10 +359,40 @@ type Attachment = {
 };
 
 export const ChatView = ({ chatId }: Props) => {
+  const [activeChatId, setActiveChatId] = useState(
+    () => chatId ?? crypto.randomUUID(),
+  );
+
+  const [isNewChat, setIsNewChat] = useState(!chatId);
+  // useEffect(() => {
+  //   setActiveChatId(chatId);
+  // }, [chatId]);
+
+  const createChat = useCallback(async (id: string) => {
+    const response = await fetch("/api/chats", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chatId: id,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create chat");
+    }
+
+    return id;
+  }, []);
+
   const { messages, sendMessage, stop, status, regenerate } = useChat({
-    id: chatId,
+    id: activeChatId,
     transport: new DefaultChatTransport({
       api: "/api/chat",
+      body: {
+        chatId: activeChatId,
+      },
     }),
   });
 
@@ -455,6 +487,14 @@ export const ChatView = ({ chatId }: Props) => {
 
       if (!text && attachmentFiles.length === 0) return;
 
+      if (isNewChat) {
+        const chatId = await createChat(activeChatId);
+
+        setIsNewChat(false);
+
+        window.history.replaceState({}, "", `/${chatId}`);
+      }
+
       const files = await Promise.all(
         attachmentFiles.map(async (file) => ({
           type: "file" as const,
@@ -473,7 +513,7 @@ export const ChatView = ({ chatId }: Props) => {
       setAttachments([]);
       setAttachmentFiles([]);
     },
-    [input, attachmentFiles, status, sendMessage],
+    [input, attachmentFiles, status, activeChatId, createChat, sendMessage],
   );
 
   return (
@@ -607,7 +647,7 @@ export const ChatView = ({ chatId }: Props) => {
                         variant="ghost"
                         onClick={() => fileInputRef.current?.click()}
                       >
-                        +
+                        <PlusIcon />
                       </Button>
                       <Input
                         value={input}

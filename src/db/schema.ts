@@ -1,5 +1,13 @@
+import { UIMessage, UIMessagePart } from "ai";
 import { defineRelations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  index,
+  jsonb,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -73,31 +81,126 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const relations = defineRelations({ user, session, account }, (r) => ({
-  user: {
-    sessions: r.many.session({
-      from: r.user.id,
-      to: r.session.userId,
-    }),
-    accounts: r.many.account({
-      from: r.user.id,
-      to: r.account.userId,
-    }),
-  },
+export const chat = pgTable(
+  "chat",
+  {
+    id: text("id").primaryKey(),
 
-  session: {
-    user: r.one.user({
-      from: r.session.userId,
-      to: r.user.id,
-      optional: false,
-    }),
-  },
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
 
-  account: {
-    user: r.one.user({
-      from: r.account.userId,
-      to: r.user.id,
-      optional: false,
-    }),
+    title: text("title"),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
   },
-}));
+  (table) => [index("chat_userId_idx").on(table.userId)],
+);
+
+export const message = pgTable(
+  "message",
+  {
+    id: text("id").$type<UIMessage["id"]>().primaryKey(),
+
+    chatId: text("chat_id")
+      .notNull()
+      .references(() => chat.id, { onDelete: "cascade" }),
+
+    role: text("role").$type<UIMessage["role"]>().notNull(),
+
+    /**
+     * Stores the AI SDK UIMessage.parts.
+     *
+     * Example:
+     * [
+     *   {
+     *     type: "text",
+     *     text: "Hello"
+     *   }
+     * ]
+     */
+    parts: jsonb("parts").$type<UIMessage["parts"]>().notNull(),
+
+    /**
+     * Optional metadata for things like:
+     * model used
+     * token usage
+     * generation time
+     * etc.
+     */
+    metadata: jsonb("metadata").$type<UIMessage["metadata"]>(),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("message_chatId_idx").on(table.chatId)],
+);
+
+export const relations = defineRelations(
+  {
+    user,
+    session,
+    account,
+    chat,
+    message,
+  },
+  (r) => ({
+    user: {
+      sessions: r.many.session({
+        from: r.user.id,
+        to: r.session.userId,
+      }),
+
+      accounts: r.many.account({
+        from: r.user.id,
+        to: r.account.userId,
+      }),
+
+      chats: r.many.chat({
+        from: r.user.id,
+        to: r.chat.userId,
+      }),
+    },
+
+    session: {
+      user: r.one.user({
+        from: r.session.userId,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+
+    account: {
+      user: r.one.user({
+        from: r.account.userId,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+
+    chat: {
+      user: r.one.user({
+        from: r.chat.userId,
+        to: r.user.id,
+        optional: false,
+      }),
+
+      messages: r.many.message({
+        from: r.chat.id,
+        to: r.message.chatId,
+      }),
+    },
+
+    message: {
+      chat: r.one.chat({
+        from: r.message.chatId,
+        to: r.chat.id,
+        optional: false,
+      }),
+    },
+  }),
+);
