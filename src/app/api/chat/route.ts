@@ -1,6 +1,7 @@
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
+  isStepCount,
   streamText,
   toUIMessageStream,
   UIMessage,
@@ -10,6 +11,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
 import { db } from "@/db";
 import { message } from "@/db/schema";
+import { webSearchTool } from "@/lib/tools";
 
 export const maxDuration = 30;
 
@@ -49,9 +51,28 @@ export async function POST(req: Request) {
   const result = streamText({
     model: google("gemini-3.5-flash-lite"),
 
-    instructions: "You are a helpful assistant.",
+    instructions: `You are Vangrex AI.
+
+You have access to a web search tool.
+
+Use web search when:
+- The user asks for current information
+- The user asks about something that may have changed recently
+- The user asks you to search the web
+- You need information that you do not reliably know
+
+When you use search, base your answer on the returned results.
+Include relevant source URLs in your response when appropriate.
+
+Do not search for ordinary conversational questions where web access is unnecessary.`,
+
+    tools: {
+      web_search: webSearchTool,
+    },
 
     messages: await convertToModelMessages(messages),
+
+    stopWhen: isStepCount(10),
 
     onFinish: async ({ text }) => {
       await db.insert(message).values({
