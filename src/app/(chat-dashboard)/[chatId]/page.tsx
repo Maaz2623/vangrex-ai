@@ -1,4 +1,5 @@
 import { ChatView } from "@/features/chat/component/chat-view";
+import { getQueryClient, trpc } from "@/trpc/server";
 import React from "react";
 
 interface Props {
@@ -9,9 +10,16 @@ interface Props {
 
 const ChatIdPage = async ({ params }: Props) => {
   const { chatId } = await params;
-  
 
-  return <ChatView chatId={chatId} />;
+  const queryClient = getQueryClient();
+
+  const data = await queryClient.query(
+    trpc.messages.getMessages.queryOptions({
+      chatId,
+    }),
+  );
+
+  return <ChatView data={data} chatId={chatId} />;
 };
 
 export default ChatIdPage;

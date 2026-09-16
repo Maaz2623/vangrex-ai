@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { TRPCReactProvider } from "@/trpc/client";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -17,8 +18,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${poppins.className} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Toaster />
-        {children}
+        <TRPCReactProvider>
+          <Toaster />
+          {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );

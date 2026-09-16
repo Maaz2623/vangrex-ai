@@ -30,7 +30,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { cn } from "@/lib/utils";
 
-import { DefaultChatTransport } from "ai";
+import { DefaultChatTransport, UIMessage } from "ai";
 import { useChat } from "@ai-sdk/react";
 
 import {
@@ -78,9 +78,11 @@ import {
   PromptInputMessage,
   PromptInputProvider,
 } from "@/components/ai-elements/prompt-input";
+import { useGetMessages } from "@/features/messages/hooks/use-messages";
 
 type Props = {
   chatId?: string;
+  data?: UIMessage[];
 };
 const models = [
   {
@@ -358,7 +360,7 @@ type Attachment = {
   url: string;
 };
 
-export const ChatView = ({ chatId }: Props) => {
+export const ChatView = ({ chatId, data }: Props) => {
   const [activeChatId, setActiveChatId] = useState(
     () => chatId ?? crypto.randomUUID(),
   );
@@ -388,6 +390,7 @@ export const ChatView = ({ chatId }: Props) => {
 
   const { messages, sendMessage, stop, status, regenerate } = useChat({
     id: activeChatId,
+    messages: data ?? [],
     transport: new DefaultChatTransport({
       api: "/api/chat",
       body: {
