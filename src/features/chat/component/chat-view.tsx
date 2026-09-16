@@ -613,8 +613,8 @@ export const ChatView = ({ chatId }: Props) => {
           <PromptInputProvider>
             <div
               className={cn(
-                "shrink-0 bg-background px-4 pb-4 pt-2",
-                chatId && "absolute bottom-0 translate-y-40",
+                "shrink-0 bg-background px-4 transition-all duration-200 pb-4 pt-2",
+                !activeChatId && "-translate-y-40",
               )}
             >
               <form
