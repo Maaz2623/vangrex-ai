@@ -1,28 +1,31 @@
 "use client";
 
 import * as React from "react";
-import { Bot, MessageSquare, Settings2, SlidersHorizontal } from "lucide-react";
+
+import {
+  Bot,
+  MessageSquare,
+  Plus,
+  Settings2,
+  SlidersHorizontal,
+} from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import { AppSidebarHeader } from "./team-switcher";
-import { authClient } from "@/lib/auth-client";
 
 const data = {
-  user: {
-    name: "User",
-    email: "user@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-
   navMain: [
     {
       title: "Chat",
@@ -49,12 +52,26 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <AppSidebarHeader />
+
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              tooltip="New chat"
+              className=""
+              variant={`outline`}
+            >
+              <a href="/chat">
+                <Plus />
+                <span>New chat</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>

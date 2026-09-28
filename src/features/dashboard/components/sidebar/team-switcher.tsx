@@ -16,10 +16,10 @@ export function AppSidebarHeader() {
         <SidebarMenuButton
           asChild
           size="lg"
-          className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center"
         >
           <Link href="/">
-            <div className="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg">
+            <div className="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
               <img
                 src="/logo.png"
                 alt="Vangrex"
@@ -27,7 +27,7 @@ export function AppSidebarHeader() {
               />
             </div>
 
-            <div className="grid flex-1 text-left text-sm leading-tight">
+            <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
               <span className="truncate font-semibold">Vangrex</span>
               <span className="truncate text-xs text-muted-foreground">
                 AI Platform
