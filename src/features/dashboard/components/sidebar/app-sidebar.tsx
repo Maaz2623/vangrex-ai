@@ -15,9 +15,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 
@@ -28,8 +25,8 @@ import { AppSidebarHeader } from "./team-switcher";
 const data = {
   navMain: [
     {
-      title: "Chat",
-      url: "/chat",
+      title: "Chats",
+      url: "/chats",
       icon: MessageSquare,
       isActive: true,
     },
@@ -56,22 +53,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <AppSidebarHeader />
-
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              tooltip="New chat"
-              className=""
-              variant={`outline`}
-            >
-              <a href="/chat">
-                <Plus />
-                <span>New chat</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>

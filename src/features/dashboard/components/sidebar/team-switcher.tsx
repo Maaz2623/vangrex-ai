@@ -16,7 +16,7 @@ export function AppSidebarHeader() {
         <SidebarMenuButton
           asChild
           size="lg"
-          className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center"
+          className="hover:bg-sidebar-accent  hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center"
         >
           <Link href="/">
             <div className="flex aspect-square size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
