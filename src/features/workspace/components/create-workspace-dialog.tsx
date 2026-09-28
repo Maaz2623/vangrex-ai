@@ -1,14 +1,15 @@
 "use client";
 
 import * as React from "react";
+
 import {
   Bot,
   Check,
   ChevronRight,
-  MessageSquare,
   Plus,
   Search,
   Sparkles,
+  Workflow,
 } from "lucide-react";
 
 import {
@@ -42,8 +43,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type NewChatDialogProps = {
-  onCreated?: (chat: { title: string; agent: string; model: string }) => void;
+type Workspace = {
+  title: string;
+  agent: string;
+  model: string;
+};
+
+type NewWorkspaceDialogProps = {
+  onCreated?: (workspace: Workspace) => void;
 };
 
 type PickerItem = {
@@ -88,7 +95,7 @@ const models: PickerItem[] = [
   },
 ];
 
-export function NewChatDialog({ onCreated }: NewChatDialogProps) {
+export function NewWorkspaceDialog({ onCreated }: NewWorkspaceDialogProps) {
   const isMobile = useIsMobile();
 
   const [open, setOpen] = React.useState(false);
@@ -100,22 +107,22 @@ export function NewChatDialog({ onCreated }: NewChatDialogProps) {
   const selectedModel = models.find((item) => item.value === model);
 
   const handleCreate = () => {
-    const chat = {
-      title: title.trim() || "New conversation",
+    const workspace = {
+      title: title.trim() || "New workspace",
       agent,
       model,
     };
 
-    onCreated?.(chat);
+    onCreated?.(workspace);
 
-    console.log("Create chat:", chat);
+    console.log("Create workspace:", workspace);
 
     setOpen(false);
     setTitle("");
   };
 
   const form = (
-    <NewChatForm
+    <NewWorkspaceForm
       title={title}
       setTitle={setTitle}
       agent={agent}
@@ -135,25 +142,25 @@ export function NewChatDialog({ onCreated }: NewChatDialogProps) {
 
       <Button type="button" onClick={handleCreate} className="gap-2">
         <Plus className="size-4" />
-        Create chat
+        Create Workspace
       </Button>
     </div>
   );
 
   /*
-   * Important:
-   *
    * Only render ONE of Dialog or Drawer.
+   *
    * This prevents both Radix components from
    * sharing the same open state.
    */
+
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button size="sm" className="h-9 gap-2">
             <Plus className="size-4" />
-            New chat
+            New Workspace
           </Button>
         </DrawerTrigger>
 
@@ -161,16 +168,16 @@ export function NewChatDialog({ onCreated }: NewChatDialogProps) {
           <DrawerHeader className="border-b px-6 py-5 text-left">
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/50">
-                <MessageSquare className="size-4" />
+                <Workflow className="size-4" />
               </div>
 
               <div className="flex min-w-0 flex-col gap-0.5">
                 <DrawerTitle className="text-sm font-semibold">
-                  New chat
+                  New Workspace
                 </DrawerTitle>
 
                 <DrawerDescription className="text-xs">
-                  Configure your new conversation.
+                  Configure your new AI workspace.
                 </DrawerDescription>
               </div>
             </div>
@@ -191,7 +198,7 @@ export function NewChatDialog({ onCreated }: NewChatDialogProps) {
       <DialogTrigger asChild>
         <Button size="sm" className="h-9 gap-2">
           <Plus className="size-4" />
-          New chat
+          New Workspace
         </Button>
       </DialogTrigger>
 
@@ -199,16 +206,16 @@ export function NewChatDialog({ onCreated }: NewChatDialogProps) {
         <DialogHeader className="border-b px-6 py-5 text-left">
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/50">
-              <MessageSquare className="size-4" />
+              <Workflow className="size-4" />
             </div>
 
             <div className="flex min-w-0 flex-col gap-0.5">
               <DialogTitle className="text-sm font-semibold">
-                New chat
+                New Workspace
               </DialogTitle>
 
               <DialogDescription className="text-xs">
-                Configure your new conversation.
+                Configure your new AI workspace.
               </DialogDescription>
             </div>
           </div>
@@ -222,7 +229,7 @@ export function NewChatDialog({ onCreated }: NewChatDialogProps) {
   );
 }
 
-type NewChatFormProps = {
+type NewWorkspaceFormProps = {
   title: string;
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   agent: string;
@@ -233,7 +240,7 @@ type NewChatFormProps = {
   selectedModel?: PickerItem;
 };
 
-function NewChatForm({
+function NewWorkspaceForm({
   title,
   setTitle,
   agent,
@@ -242,15 +249,15 @@ function NewChatForm({
   setModel,
   selectedAgent,
   selectedModel,
-}: NewChatFormProps) {
+}: NewWorkspaceFormProps) {
   return (
     <div className="space-y-6 px-6 py-6">
-      {/* Title */}
+      {/* Workspace name */}
       <div className="space-y-2">
-        <Label htmlFor="chat-title">Chat title</Label>
+        <Label htmlFor="workspace-title">Workspace name</Label>
 
         <Input
-          id="chat-title"
+          id="workspace-title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           placeholder="e.g. Build authentication system"
@@ -258,7 +265,7 @@ function NewChatForm({
         />
 
         <p className="text-[11px] text-muted-foreground">
-          Optional. You can rename this conversation later.
+          Optional. You can rename this workspace later.
         </p>
       </div>
 
@@ -270,7 +277,7 @@ function NewChatForm({
           <Label>Agent</Label>
 
           <p className="mt-1 text-xs text-muted-foreground">
-            Choose the agent that will handle this conversation.
+            Choose the agent that will power this workspace.
           </p>
         </div>
 
@@ -280,7 +287,7 @@ function NewChatForm({
           onSelect={setAgent}
           icon={<Bot className="size-4 text-muted-foreground" />}
           title="Choose agent"
-          description="Select the agent you want to use for this conversation."
+          description="Select the agent you want to use in this workspace."
           trigger={
             <PickerTrigger
               icon={<Bot className="size-4 text-muted-foreground" />}
@@ -297,7 +304,7 @@ function NewChatForm({
           <Label>Model</Label>
 
           <p className="mt-1 text-xs text-muted-foreground">
-            Select the model powering your agent.
+            Select the model powering your workspace.
           </p>
         </div>
 
@@ -307,7 +314,7 @@ function NewChatForm({
           onSelect={setModel}
           icon={<Sparkles className="size-4 text-muted-foreground" />}
           title="Choose model"
-          description="Select the model that will power your agent."
+          description="Select the model that will power your workspace."
           trigger={
             <PickerTrigger
               icon={<Sparkles className="size-4 text-muted-foreground" />}

@@ -8,8 +8,11 @@ import { ModelsSection } from "@/features/home/components/models-selection";
 import { Navbar } from "@/features/home/components/navbar";
 import { UseCases } from "@/features/home/components/use-cases";
 import { WorkflowSection } from "@/features/home/components/workflow-section";
+import { requireUnAuth } from "@/lib/auth-utils";
 
-export default function Home() {
+export default async function Home() {
+  await requireUnAuth();
+
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <Navbar />
