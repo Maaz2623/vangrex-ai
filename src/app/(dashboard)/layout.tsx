@@ -1,7 +1,9 @@
+import { DashboardLayout } from "@/features/dashboard/components/dashboard-layout";
+
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="max-h-screen">{children}</div>;
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
