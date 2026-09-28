@@ -60,14 +60,14 @@ export function Navbar() {
 
           <div className="hidden items-center gap-2 md:flex">
             <a
-              href="#"
+              href="/auth"
               className="rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               Sign in
             </a>
 
             <a
-              href="#"
+              href="/auth"
               className="group flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-transform hover:scale-[1.02]"
             >
               Get started
