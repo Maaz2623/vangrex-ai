@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 
 import {
@@ -521,8 +521,9 @@ export function ToolBuilderDialog({
               >
                 <X className="size-4" />
               </Button>
-
-              <Separator orientation="vertical" className="h-6" />
+              <div>
+                <Separator orientation="vertical" className="h-6" />
+              </div>
 
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
@@ -538,9 +539,7 @@ export function ToolBuilderDialog({
                   </Badge>
                 </div>
 
-                <DialogDescription className="mt-0.5 text-xs">
-                  Configure your Vangrex tool
-                </DialogDescription>
+                <DialogDescription className="mt-0.5 text-xs"></DialogDescription>
               </div>
             </div>
 
@@ -581,10 +580,10 @@ export function ToolBuilderDialog({
 
         <div className="flex min-h-0 flex-1 flex-col">
           {/* Mobile navigation */}
-
+          {/* Mobile navigation */}
           <div className="shrink-0 border-b md:hidden">
-            <ScrollArea className="w-full">
-              <div className="flex gap-1 px-3 py-2">
+            <ScrollArea className="w-full" >
+              <div className="flex w-max min-w-full gap-1 px-3 py-2">
                 {sections.map((section) => {
                   const Icon = section.icon;
                   const active = activeSection === section.id;
@@ -595,21 +594,22 @@ export function ToolBuilderDialog({
                       variant={active ? "secondary" : "ghost"}
                       size="sm"
                       className={`
-                        h-8
-                        shrink-0
-                        rounded-lg
-                        px-2.5
-                        text-xs
-                        ${active ? "shadow-sm" : "text-muted-foreground"}
-                      `}
+              h-8
+              shrink-0
+              rounded-lg
+              px-2.5
+              text-xs
+              ${active ? "shadow-sm" : "text-muted-foreground"}
+            `}
                       onClick={() => setActiveSection(section.id)}
                     >
-                      <Icon className="mr-1.5 size-3.5" />
+                      <Icon className="mr-1.5 size-3.5 shrink-0" />
                       {section.label}
                     </Button>
                   );
                 })}
               </div>
+              <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </div>
 
@@ -621,7 +621,7 @@ export function ToolBuilderDialog({
             <aside className="hidden w-[230px] shrink-0 border-r md:flex md:flex-col">
               <ScrollArea className="flex-1">
                 <div className="p-3">
-                  <div className="mb-3 px-2">
+                  <div className="mb-3 px-2 border-b pb-2">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                       Tool builder
                     </p>
@@ -720,26 +720,6 @@ export function ToolBuilderDialog({
                   </nav>
                 </div>
               </ScrollArea>
-
-              {/* Sidebar bottom card */}
-
-              <div className="border-t p-3">
-                <div className="rounded-xl border bg-muted/20 p-3">
-                  <div className="flex items-start gap-2.5">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-background shadow-sm">
-                      <WandSparkles className="size-3.5" />
-                    </div>
-
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium">AI assisted</p>
-
-                      <p className="mt-0.5 text-[10px] leading-4 text-muted-foreground">
-                        Describe changes naturally using the command bar below.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </aside>
 
             {/* ------------------------------------------------------------ */}

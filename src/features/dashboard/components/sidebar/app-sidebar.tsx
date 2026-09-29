@@ -3,6 +3,10 @@
 import * as React from "react";
 import {
   Bot,
+  Building2,
+  Globe2,
+  Layers3,
+  Rocket,
   Settings2,
   SlidersHorizontal,
   Sparkles,
@@ -21,7 +25,7 @@ import {
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { AppSidebarHeader } from "./team-switcher";
+import { TeamSwitcher } from "./team-switcher";
 
 const data = {
   navMain: [
@@ -78,6 +82,34 @@ const motionProps = {
   },
 };
 
+const organizations = [
+  {
+    name: "Vangrex",
+    logo: Sparkles,
+    plan: "Pro",
+  },
+  {
+    name: "Acme Labs",
+    logo: Building2,
+    plan: "Team",
+  },
+  {
+    name: "Nova Systems",
+    logo: Rocket,
+    plan: "Enterprise",
+  },
+  {
+    name: "Atlas AI",
+    logo: Globe2,
+    plan: "Team",
+  },
+  {
+    name: "Vertex Labs",
+    logo: Layers3,
+    plan: "Pro",
+  },
+];
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -88,7 +120,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {...motionProps}
             className="overflow-hidden"
           >
-            <AppSidebarHeader />
+            <TeamSwitcher teams={organizations} />
           </motion.div>
         </AnimatePresence>
       </SidebarHeader>
