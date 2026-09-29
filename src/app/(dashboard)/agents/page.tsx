@@ -1,7 +1,8 @@
+import { Agents } from "@/features/agents/agents";
 import React from "react";
 
 const AgentsPage = () => {
-  return <div>Agents</div>;
+  return <Agents />;
 };
 
 export default AgentsPage;
