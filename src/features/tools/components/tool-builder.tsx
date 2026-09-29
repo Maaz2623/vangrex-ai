@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
+
 import { AnimatePresence, motion } from "motion/react";
+
 import {
   Check,
   Code2,
@@ -12,7 +14,6 @@ import {
   Plus,
   Save,
   Settings2,
-  Sparkles,
   Trash2,
   WandSparkles,
   X,
@@ -36,12 +37,21 @@ import {
 } from "@/components/ui/dialog";
 
 import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -203,6 +213,8 @@ export function ToolBuilderDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const isMobile = useIsMobile();
+
   const [activeSection, setActiveSection] = React.useState<Section>("overview");
 
   const [toolName, setToolName] = React.useState("Web Researcher");
@@ -212,6 +224,7 @@ export function ToolBuilderDialog({
   );
 
   const [category, setCategory] = React.useState("Research");
+
   const [version, setVersion] = React.useState("1.0.0");
 
   const [instructions, setInstructions] = React.useState(
@@ -231,8 +244,11 @@ export function ToolBuilderDialog({
     React.useState<Capability[]>(initialCapabilities);
 
   const [aiPrompt, setAiPrompt] = React.useState("");
+
   const [isGenerating, setIsGenerating] = React.useState(false);
+
   const [isSaving, setIsSaving] = React.useState(false);
+
   const [isPublished, setIsPublished] = React.useState(false);
 
   /* ------------------------------------------------------------------------ */
@@ -254,7 +270,12 @@ export function ToolBuilderDialog({
   const updateInput = (id: string, field: Partial<InputField>) => {
     setInputs((current) =>
       current.map((input) =>
-        input.id === id ? { ...input, ...field } : input,
+        input.id === id
+          ? {
+              ...input,
+              ...field,
+            }
+          : input,
       ),
     );
   };
@@ -283,7 +304,12 @@ export function ToolBuilderDialog({
   const updateOutput = (id: string, field: Partial<OutputField>) => {
     setOutputs((current) =>
       current.map((output) =>
-        output.id === id ? { ...output, ...field } : output,
+        output.id === id
+          ? {
+              ...output,
+              ...field,
+            }
+          : output,
       ),
     );
   };
@@ -483,9 +509,310 @@ export function ToolBuilderDialog({
     }
   };
 
-  const currentSection = sections.find(
-    (section) => section.id === activeSection,
+  /* ------------------------------------------------------------------------ */
+  /* Shared content                                                            */
+  /* ------------------------------------------------------------------------ */
+
+  const content = (
+    <div className="flex min-h-0 flex-1 flex-col">
+      {/* Mobile navigation */}
+      <div className="shrink-0 border-b md:hidden">
+        <ScrollArea className="w-full">
+          <div className="flex w-max min-w-full gap-1 px-3 py-2">
+            {sections.map((section) => {
+              const Icon = section.icon;
+              const active = activeSection === section.id;
+
+              return (
+                <Button
+                  key={section.id}
+                  variant={active ? "secondary" : "ghost"}
+                  size="sm"
+                  className={`
+                    h-8
+                    shrink-0
+                    rounded-lg
+                    px-2.5
+                    text-xs
+                    ${active ? "shadow-sm" : "text-muted-foreground"}
+                  `}
+                  onClick={() => setActiveSection(section.id)}
+                >
+                  <Icon className="mr-1.5 size-3.5 shrink-0" />
+                  {section.label}
+                </Button>
+              );
+            })}
+          </div>
+
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+
+      <div className="flex min-h-0 flex-1">
+        {/* Desktop sidebar */}
+        <aside className="hidden w-[230px] shrink-0 border-r md:flex md:flex-col">
+          <ScrollArea className="flex-1">
+            <div className="p-3">
+              <div className="mb-3 border-b px-2 pb-2">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  Tool builder
+                </p>
+
+                <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
+                  Configure how your tool behaves and what it can access.
+                </p>
+              </div>
+
+              <nav className="space-y-1">
+                {sections.map((section) => {
+                  const Icon = section.icon;
+                  const active = activeSection === section.id;
+
+                  return (
+                    <button
+                      key={section.id}
+                      type="button"
+                      onClick={() => setActiveSection(section.id)}
+                      className="
+                        relative
+                        flex
+                        w-full
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3
+                        py-2.5
+                        text-left
+                        transition-colors
+                        hover:bg-muted/60
+                      "
+                    >
+                      {active && (
+                        <motion.div
+                          layoutId="tool-builder-section"
+                          className="absolute inset-0 rounded-xl bg-muted"
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 35,
+                          }}
+                        />
+                      )}
+
+                      <div
+                        className={`
+                          relative
+                          z-10
+                          flex
+                          size-8
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-lg
+                          ${
+                            active
+                              ? "bg-background shadow-sm"
+                              : "bg-transparent"
+                          }
+                        `}
+                      >
+                        <Icon
+                          className={`
+                            size-3.5
+                            ${
+                              active
+                                ? "text-foreground"
+                                : "text-muted-foreground"
+                            }
+                          `}
+                        />
+                      </div>
+
+                      <div className="relative z-10 min-w-0">
+                        <p
+                          className={`
+                            text-xs
+                            ${
+                              active
+                                ? "font-medium text-foreground"
+                                : "text-muted-foreground"
+                            }
+                          `}
+                        >
+                          {section.label}
+                        </p>
+
+                        <p className="mt-0.5 truncate text-[10px] text-muted-foreground/70">
+                          {section.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </ScrollArea>
+        </aside>
+
+        {/* Editor */}
+        <main className="min-w-0 flex-1">
+          <ScrollArea className="h-full">
+            <div
+              className="
+                mx-auto
+                w-full
+                max-w-3xl
+                px-5
+                pb-36
+                pt-6
+                sm:px-8
+                sm:pt-8
+              "
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSection}
+                  initial={{
+                    opacity: 0,
+                    y: 8,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -8,
+                  }}
+                  transition={{
+                    duration: 0.16,
+                    ease: "easeOut",
+                  }}
+                >
+                  {renderSection()}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </ScrollArea>
+        </main>
+      </div>
+    </div>
   );
+
+  /* ------------------------------------------------------------------------ */
+  /* Header                                                                    */
+  /* ------------------------------------------------------------------------ */
+
+  const headerContent = (
+    <div className="flex min-h-[68px] items-center justify-between gap-4 px-4 sm:px-5">
+      <div className="flex min-w-0 items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8 shrink-0 rounded-lg"
+          onClick={() => onOpenChange(false)}
+        >
+          <X className="size-4" />
+        </Button>
+
+        <Separator orientation="vertical" className="h-6" />
+
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            {isMobile ? (
+              <DrawerTitle className="truncate text-sm font-semibold">
+                {toolName || "Create tool"}
+              </DrawerTitle>
+            ) : (
+              <DialogTitle className="truncate text-sm font-semibold">
+                {toolName || "Create tool"}
+              </DialogTitle>
+            )}
+
+            <Badge
+              variant="secondary"
+              className="hidden rounded-md px-1.5 py-0 text-[9px] font-medium sm:inline-flex"
+            >
+              v{version}
+            </Badge>
+          </div>
+
+          {isMobile ? (
+            <DrawerDescription className="sr-only">
+              Configure your Vangrex tool.
+            </DrawerDescription>
+          ) : (
+            <DialogDescription className="sr-only">
+              Configure your Vangrex tool.
+            </DialogDescription>
+          )}
+        </div>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hidden rounded-lg sm:flex"
+          onClick={handleSave}
+          disabled={isSaving}
+        >
+          <Save className="mr-2 size-3.5" />
+          {isSaving ? "Saving..." : "Save draft"}
+        </Button>
+
+        <Button
+          size="sm"
+          className="rounded-lg px-4"
+          onClick={handlePublish}
+          disabled={isPublished}
+        >
+          {isPublished ? (
+            <>
+              <Check className="mr-1.5 size-3.5" />
+              Published
+            </>
+          ) : (
+            "Publish"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+
+  /* ------------------------------------------------------------------------ */
+  /* Mobile Drawer                                                             */
+  /* ------------------------------------------------------------------------ */
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent
+          className="
+            flex
+            h-[94dvh]
+            max-h-[94dvh]
+            flex-col
+            gap-0
+            overflow-hidden
+            rounded-t-2xl
+            p-0
+          "
+        >
+          <DrawerHeader className="shrink-0 border-b p-0">
+            {headerContent}
+          </DrawerHeader>
+
+          {content}
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  /* ------------------------------------------------------------------------ */
+  /* Desktop Dialog                                                            */
+  /* ------------------------------------------------------------------------ */
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -506,257 +833,11 @@ export function ToolBuilderDialog({
           shadow-2xl
         "
       >
-        {/* ---------------------------------------------------------------- */}
-        {/* Header                                                            */}
-        {/* ---------------------------------------------------------------- */}
-
-        <DialogHeader className="shrink-0 border-b">
-          <div className="flex min-h-[68px] items-center justify-between gap-4 px-4 sm:px-5">
-            <div className="flex min-w-0 items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-8 shrink-0 rounded-lg"
-                onClick={() => onOpenChange(false)}
-              >
-                <X className="size-4" />
-              </Button>
-              <div>
-                <Separator orientation="vertical" className="h-6" />
-              </div>
-
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <DialogTitle className="truncate text-sm font-semibold">
-                    {toolName || "Create tool"}
-                  </DialogTitle>
-
-                  <Badge
-                    variant="secondary"
-                    className="hidden rounded-md px-1.5 py-0 text-[9px] font-medium sm:inline-flex"
-                  >
-                    v{version}
-                  </Badge>
-                </div>
-
-                <DialogDescription className="mt-0.5 text-xs"></DialogDescription>
-              </div>
-            </div>
-
-            <div className="flex shrink-0 items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hidden rounded-lg sm:flex"
-                onClick={handleSave}
-                disabled={isSaving}
-              >
-                <Save className="mr-2 size-3.5" />
-                {isSaving ? "Saving..." : "Save draft"}
-              </Button>
-
-              <Button
-                size="sm"
-                className="rounded-lg px-4"
-                onClick={handlePublish}
-                disabled={isPublished}
-              >
-                {isPublished ? (
-                  <>
-                    <Check className="mr-1.5 size-3.5" />
-                    Published
-                  </>
-                ) : (
-                  "Publish"
-                )}
-              </Button>
-            </div>
-          </div>
+        <DialogHeader className="shrink-0 border-b p-0">
+          {headerContent}
         </DialogHeader>
 
-        {/* ---------------------------------------------------------------- */}
-        {/* Main                                                              */}
-        {/* ---------------------------------------------------------------- */}
-
-        <div className="flex min-h-0 flex-1 flex-col">
-          {/* Mobile navigation */}
-          {/* Mobile navigation */}
-          <div className="shrink-0 border-b md:hidden">
-            <ScrollArea className="w-full" >
-              <div className="flex w-max min-w-full gap-1 px-3 py-2">
-                {sections.map((section) => {
-                  const Icon = section.icon;
-                  const active = activeSection === section.id;
-
-                  return (
-                    <Button
-                      key={section.id}
-                      variant={active ? "secondary" : "ghost"}
-                      size="sm"
-                      className={`
-              h-8
-              shrink-0
-              rounded-lg
-              px-2.5
-              text-xs
-              ${active ? "shadow-sm" : "text-muted-foreground"}
-            `}
-                      onClick={() => setActiveSection(section.id)}
-                    >
-                      <Icon className="mr-1.5 size-3.5 shrink-0" />
-                      {section.label}
-                    </Button>
-                  );
-                })}
-              </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </div>
-
-          <div className="flex min-h-0 flex-1">
-            {/* ------------------------------------------------------------ */}
-            {/* Sidebar                                                       */}
-            {/* ------------------------------------------------------------ */}
-
-            <aside className="hidden w-[230px] shrink-0 border-r md:flex md:flex-col">
-              <ScrollArea className="flex-1">
-                <div className="p-3">
-                  <div className="mb-3 px-2 border-b pb-2">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                      Tool builder
-                    </p>
-
-                    <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
-                      Configure how your tool behaves and what it can access.
-                    </p>
-                  </div>
-
-                  <nav className="space-y-1">
-                    {sections.map((section) => {
-                      const Icon = section.icon;
-                      const active = activeSection === section.id;
-
-                      return (
-                        <button
-                          key={section.id}
-                          type="button"
-                          onClick={() => setActiveSection(section.id)}
-                          className={`
-                            relative
-                            flex
-                            w-full
-                            items-center
-                            gap-3
-                            rounded-xl
-                            px-3
-                            py-2.5
-                            text-left
-                            transition-colors
-                            hover:bg-muted/60
-                          `}
-                        >
-                          {active && (
-                            <motion.div
-                              layoutId="tool-builder-section"
-                              className="absolute inset-0 rounded-xl bg-muted"
-                              transition={{
-                                type: "spring",
-                                stiffness: 500,
-                                damping: 35,
-                              }}
-                            />
-                          )}
-
-                          <div
-                            className={`
-                              relative
-                              z-10
-                              flex
-                              size-8
-                              shrink-0
-                              items-center
-                              justify-center
-                              rounded-lg
-                              ${
-                                active
-                                  ? "bg-background shadow-sm"
-                                  : "bg-transparent"
-                              }
-                            `}
-                          >
-                            <Icon
-                              className={`
-                                size-3.5
-                                ${
-                                  active
-                                    ? "text-foreground"
-                                    : "text-muted-foreground"
-                                }
-                              `}
-                            />
-                          </div>
-
-                          <div className="relative z-10 min-w-0">
-                            <p
-                              className={`
-                                text-xs
-                                ${
-                                  active
-                                    ? "font-medium text-foreground"
-                                    : "text-muted-foreground"
-                                }
-                              `}
-                            >
-                              {section.label}
-                            </p>
-
-                            <p className="mt-0.5 truncate text-[10px] text-muted-foreground/70">
-                              {section.description}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </nav>
-                </div>
-              </ScrollArea>
-            </aside>
-
-            {/* ------------------------------------------------------------ */}
-            {/* Editor                                                        */}
-            {/* ------------------------------------------------------------ */}
-
-            <main className="min-w-0 flex-1">
-              <ScrollArea className="h-full">
-                <div className="mx-auto w-full max-w-3xl px-5 pb-36 pt-6 sm:px-8 sm:pt-8">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeSection}
-                      initial={{
-                        opacity: 0,
-                        y: 8,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      exit={{
-                        opacity: 0,
-                        y: -8,
-                      }}
-                      transition={{
-                        duration: 0.16,
-                        ease: "easeOut",
-                      }}
-                    >
-                      {renderSection()}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </ScrollArea>
-            </main>
-          </div>
-        </div>
+        {content}
       </DialogContent>
     </Dialog>
   );
@@ -891,6 +972,7 @@ function InstructionsSection({
         <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2.5">
           <div className="flex items-center gap-2">
             <Code2 className="size-3.5 text-muted-foreground" />
+
             <span className="text-xs font-medium">Execution instructions</span>
           </div>
 
