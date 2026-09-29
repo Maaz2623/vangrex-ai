@@ -2,7 +2,19 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Bot, Check, Plus, Search, Sparkles, X, Zap } from "lucide-react";
+import {
+  ArrowUpRight,
+  Bot,
+  Check,
+  Plus,
+  Search,
+  Sparkles,
+  Users,
+  Workflow,
+  Wrench,
+  X,
+  Zap,
+} from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -26,6 +38,7 @@ import {
 
 import { AgentCard } from "./components/agent-card";
 import type { Agent } from "./types";
+import { useRouter } from "next/navigation";
 
 /* -------------------------------------------------------------------------- */
 /* Agent data                                                                 */
@@ -439,6 +452,8 @@ export const Agents = () => {
   /* Groups                                                                    */
   /* ------------------------------------------------------------------------ */
 
+  const router = useRouter();
+
   const groupedAgents = React.useMemo(() => {
     return groups
       .map((group) => ({
@@ -771,33 +786,106 @@ export const Agents = () => {
 
       {/* Create agent */}
       <Dialog open={agentBuilderOpen} onOpenChange={setAgentBuilderOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Create agent</DialogTitle>
-
+        <DialogContent className="max-w-lg overflow-hidden p-0">
+          <DialogHeader className="border-b px-6 py-5">
+            <DialogTitle>Build an agent</DialogTitle>
             <DialogDescription>
-              Configure a new agent with a model, instructions, and tools.
+              Design your agent visually by connecting models, tools, and
+              subagents on a canvas.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-muted">
-              <Bot className="size-4 text-muted-foreground" />
+          <div className="px-6 pb-4">
+            <div className="relative overflow-hidden rounded-xl border bg-muted/30 p-6">
+              {/* Canvas preview */}
+              <div className="pointer-events-none absolute inset-0 opacity-40">
+                <div className="absolute left-1/2 top-1/2 h-px w-32 -translate-x-1/2 bg-border" />
+                <div className="absolute left-[28%] top-[35%] h-px w-20 rotate-[25deg] bg-border" />
+                <div className="absolute right-[28%] top-[35%] h-px w-20 -rotate-[25deg] bg-border" />
+              </div>
+
+              <div className="relative flex min-h-52 items-center justify-center">
+                {/* Main agent */}
+                <div className="absolute left-1/2 top-1/2 flex size-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-xl border bg-background shadow-sm">
+                  <Bot className="mb-1 size-5" />
+                  <span className="text-[11px] font-medium">Agent</span>
+                </div>
+
+                {/* Tool node */}
+                <div className="absolute left-5 top-5 flex items-center gap-2 rounded-lg border bg-background px-3 py-2 shadow-sm">
+                  <div className="flex size-6 items-center justify-center rounded-md bg-muted">
+                    <Wrench className="size-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-xs font-medium">Tools</span>
+                </div>
+
+                {/* Subagent node */}
+                <div className="absolute right-5 top-5 flex items-center gap-2 rounded-lg border bg-background px-3 py-2 shadow-sm">
+                  <div className="flex size-6 items-center justify-center rounded-md bg-muted">
+                    <Users className="size-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-xs font-medium">Subagent</span>
+                </div>
+
+                {/* Model node */}
+                <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-lg border bg-background px-3 py-2 shadow-sm">
+                  <div className="flex size-6 items-center justify-center rounded-md bg-muted">
+                    <Sparkles className="size-3.5 text-muted-foreground" />
+                  </div>
+                  <span className="text-xs font-medium">Model</span>
+                </div>
+              </div>
             </div>
 
-            <p className="text-sm font-medium">Agent builder</p>
+            <div className="mt-6 space-y-3">
+              <div>
+                <h3 className="text-sm font-semibold">
+                  Your agent, built visually.
+                </h3>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  Start with an agent and build its capabilities by connecting
+                  models, tools, skills, and specialized subagents. Shape how
+                  everything works together directly on the canvas.
+                </p>
+              </div>
 
-            <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
-              Connect your agent builder here.
-            </p>
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                <div className="rounded-lg border bg-background p-3">
+                  <Wrench className="mb-2 size-4 text-muted-foreground" />
+                  <p className="text-xs font-medium">Connect tools</p>
+                  <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
+                    Give agents real capabilities.
+                  </p>
+                </div>
+
+                <div className="rounded-lg border bg-background p-3">
+                  <Users className="mb-2 size-4 text-muted-foreground" />
+                  <p className="text-xs font-medium">Add subagents</p>
+                  <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
+                    Delegate specialized work.
+                  </p>
+                </div>
+
+                <div className="rounded-lg border bg-background p-3">
+                  <Workflow className="mb-2 size-4 text-muted-foreground" />
+                  <p className="text-xs font-medium">Compose flows</p>
+                  <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
+                    Connect everything together.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             <Button
-              variant="outline"
-              size="sm"
-              className="mt-5"
-              onClick={() => setAgentBuilderOpen(false)}
+              className="mt-6 w-full"
+              size="lg"
+              onClick={() => {
+                setAgentBuilderOpen(false);
+                router.push("/agents/builder");
+              }}
             >
-              Close
+              Open agent builder
+              <ArrowUpRight className="ml-2 size-4" />
             </Button>
           </div>
         </DialogContent>
