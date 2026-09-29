@@ -1,19 +1,23 @@
 "use client";
 
 import * as React from "react";
-
 import { AnimatePresence, motion } from "motion/react";
-
 import {
-  BookOpen,
+  Bot,
   Check,
-  Copy,
+  FileArchive,
   FileCode2,
   FileText,
+  Package,
   Plus,
   Search,
+  Shield,
   Upload,
   X,
+  GitBranch,
+  Activity,
+  Globe,
+  Lock,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -23,8 +27,16 @@ type Skill = {
   id: string;
   name: string;
   description: string;
+  version: string;
   updated: string;
-  content: string;
+  agents: number;
+  runs: number;
+  lastUsed: string;
+  published: boolean;
+  fileCount: number;
+  hasReferences: boolean;
+  hasScripts: boolean;
+  hasAssets: boolean;
 };
 
 const initialSkills: Skill[] = [
@@ -33,125 +45,64 @@ const initialSkills: Skill[] = [
     name: "Web Research",
     description:
       "Guidelines for researching the web, evaluating sources, and synthesizing reliable findings.",
+    version: "1.2.0",
     updated: "Today",
-    content: `# Web Research
-
-## Purpose
-
-Research topics on the web and produce accurate, well-supported answers.
-
-## Instructions
-
-- Identify the user's actual research question.
-- Prefer primary and authoritative sources.
-- Cross-check important claims.
-- Distinguish facts from opinions.
-- Include relevant context and limitations.
-- Cite sources when appropriate.`,
+    agents: 8,
+    runs: 342,
+    lastUsed: "12 min ago",
+    published: true,
+    fileCount: 4,
+    hasReferences: true,
+    hasScripts: false,
+    hasAssets: false,
   },
   {
     id: "skill_002",
     name: "Code Generation",
     description:
       "Instructions for writing, refactoring, debugging, and reviewing production-ready code.",
+    version: "2.0.1",
     updated: "Today",
-    content: `# Code Generation
-
-## Purpose
-
-Write clean, maintainable, production-ready code.
-
-## Instructions
-
-- Understand the existing architecture before making changes.
-- Follow established project conventions.
-- Prefer simple and composable solutions.
-- Avoid unnecessary abstractions.
-- Handle errors explicitly.
-- Keep implementations type-safe.`,
+    agents: 14,
+    runs: 1284,
+    lastUsed: "3 min ago",
+    published: true,
+    fileCount: 9,
+    hasReferences: true,
+    hasScripts: true,
+    hasAssets: true,
   },
   {
     id: "skill_003",
     name: "Document Analysis",
     description:
       "A reusable methodology for reading, extracting, summarizing, and structuring information from documents.",
+    version: "1.0.0",
     updated: "Yesterday",
-    content: `# Document Analysis
-
-## Purpose
-
-Analyze documents and transform unstructured information into useful structured output.
-
-## Instructions
-
-- Identify the document's purpose and structure.
-- Extract relevant information.
-- Preserve important context.
-- Clearly distinguish source information from interpretation.
-- Produce concise and structured summaries.`,
+    agents: 4,
+    runs: 87,
+    lastUsed: "2 hr ago",
+    published: false,
+    fileCount: 2,
+    hasReferences: true,
+    hasScripts: false,
+    hasAssets: false,
   },
   {
     id: "skill_004",
     name: "Data Analysis",
     description:
       "Instructions for analyzing datasets, identifying patterns, and communicating useful insights.",
+    version: "1.1.0",
     updated: "Yesterday",
-    content: `# Data Analysis
-
-## Purpose
-
-Analyze data carefully and communicate meaningful findings.
-
-## Instructions
-
-- Inspect the dataset before analyzing it.
-- Identify missing or inconsistent data.
-- Validate assumptions.
-- Look for meaningful patterns and relationships.
-- Quantify findings whenever possible.
-- Clearly communicate uncertainty.`,
-  },
-  {
-    id: "skill_005",
-    name: "Content Writing",
-    description:
-      "Writing guidelines for producing clear, polished, and consistent content across different formats.",
-    updated: "Sep 27",
-    content: `# Content Writing
-
-## Purpose
-
-Create clear, useful, and engaging written content.
-
-## Instructions
-
-- Understand the target audience.
-- Establish the desired tone.
-- Use clear and concise language.
-- Structure information logically.
-- Remove unnecessary repetition.
-- Prefer concrete language over vague wording.`,
-  },
-  {
-    id: "skill_006",
-    name: "API Integration",
-    description:
-      "Guidelines for understanding API documentation, schemas, authentication, requests, and responses.",
-    updated: "Sep 26",
-    content: `# API Integration
-
-## Purpose
-
-Work with external APIs safely and consistently.
-
-## Instructions
-
-- Read the API documentation before implementation.
-- Understand authentication requirements.
-- Validate request and response schemas.
-- Handle errors and rate limits.
-- Keep secrets out of source code.
-- Follow the API's documented conventions.`,
+    agents: 6,
+    runs: 213,
+    lastUsed: "5 hr ago",
+    published: true,
+    fileCount: 6,
+    hasReferences: true,
+    hasScripts: true,
+    hasAssets: false,
   },
 ];
 
@@ -166,21 +117,31 @@ const CreateSkillDialog = ({
   onOpenChange,
   onCreate,
 }: CreateSkillDialogProps) => {
-  const [mode, setMode] = React.useState<"write" | "upload">("write");
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [content, setContent] = React.useState("");
-  const [fileName, setFileName] = React.useState("");
+  const [version, setVersion] = React.useState("1.0.0");
+  const [folderName, setFolderName] = React.useState("");
+  const [fileCount, setFileCount] = React.useState(0);
+  const [hasSkillFile, setHasSkillFile] = React.useState(false);
+  const [hasReferences, setHasReferences] = React.useState(false);
+  const [hasScripts, setHasScripts] = React.useState(false);
+  const [hasAssets, setHasAssets] = React.useState(false);
+  const [publish, setPublish] = React.useState(false);
   const [error, setError] = React.useState("");
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const reset = () => {
-    setMode("write");
     setName("");
     setDescription("");
-    setContent("");
-    setFileName("");
+    setVersion("1.0.0");
+    setFolderName("");
+    setFileCount(0);
+    setHasSkillFile(false);
+    setHasReferences(false);
+    setHasScripts(false);
+    setHasAssets(false);
+    setPublish(false);
     setError("");
 
     if (fileInputRef.current) {
@@ -196,52 +157,72 @@ const CreateSkillDialog = ({
     onOpenChange(value);
   };
 
-  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFolder = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? []);
 
-    if (!file) {
+    if (!files.length) {
       return;
     }
 
-    const extension = file.name.split(".").pop()?.toLowerCase();
+    const skillFile = files.find((file) =>
+      file.name.toLowerCase().endsWith("skill.md"),
+    );
 
-    if (extension !== "md" && extension !== "mdx") {
-      setError("Please upload a .md or .mdx file.");
+    if (!skillFile) {
+      setError(
+        "This folder does not contain a SKILL.md file. A valid skill must have SKILL.md as its entry point.",
+      );
+      setHasSkillFile(false);
       return;
     }
 
-    try {
-      const text = await file.text();
+    const firstPath = files[0].webkitRelativePath;
+    const rootFolder = firstPath?.split("/")[0] ?? "skill";
 
-      setFileName(file.name);
-      setContent(text);
-      setError("");
+    const hasReferencesFolder = files.some((file) =>
+      file.webkitRelativePath.toLowerCase().includes("/references/"),
+    );
 
-      if (!name) {
-        const fileBaseName = file.name.replace(/\.(md|mdx)$/i, "");
+    const hasScriptsFolder = files.some((file) =>
+      file.webkitRelativePath.toLowerCase().includes("/scripts/"),
+    );
 
-        setName(
-          fileBaseName
-            .replace(/[-_]+/g, " ")
-            .replace(/\b\w/g, (character) => character.toUpperCase()),
-        );
-      }
-    } catch {
-      setError("Unable to read this file.");
+    const hasAssetsFolder = files.some((file) =>
+      file.webkitRelativePath.toLowerCase().includes("/assets/"),
+    );
+
+    setFolderName(rootFolder);
+    setFileCount(files.length);
+    setHasSkillFile(true);
+    setHasReferences(hasReferencesFolder);
+    setHasScripts(hasScriptsFolder);
+    setHasAssets(hasAssetsFolder);
+    setError("");
+
+    if (!name) {
+      setName(
+        rootFolder
+          .replace(/[-_]+/g, " ")
+          .replace(/\b\w/g, (character) => character.toUpperCase()),
+      );
     }
   };
 
   const handleCreate = () => {
     const trimmedName = name.trim();
-    const trimmedContent = content.trim();
 
     if (!trimmedName) {
       setError("Give your skill a name.");
       return;
     }
 
-    if (!trimmedContent) {
-      setError("Add some Markdown or MDX content.");
+    if (!hasSkillFile) {
+      setError("Upload a skill folder containing SKILL.md.");
+      return;
+    }
+
+    if (!/^\d+\.\d+\.\d+$/.test(version)) {
+      setError("Version must use semantic versioning, for example 1.0.0.");
       return;
     }
 
@@ -250,8 +231,16 @@ const CreateSkillDialog = ({
       name: trimmedName,
       description:
         description.trim() || "Reusable knowledge for your AI agents.",
+      version,
       updated: "Just now",
-      content: trimmedContent,
+      agents: 0,
+      runs: 0,
+      lastUsed: "Never",
+      published: publish,
+      fileCount,
+      hasReferences,
+      hasScripts,
+      hasAssets,
     };
 
     onCreate(skill);
@@ -276,38 +265,24 @@ const CreateSkillDialog = ({
         }}
       >
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 12,
-            scale: 0.98,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-          }}
-          exit={{
-            opacity: 0,
-            y: 8,
-            scale: 0.98,
-          }}
-          transition={{
-            duration: 0.18,
-            ease: "easeOut",
-          }}
-          className="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border bg-background shadow-2xl"
+          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 8, scale: 0.98 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-xl border bg-background shadow-2xl"
           role="dialog"
           aria-modal="true"
           aria-labelledby="create-skill-title"
         >
+          {/* Header */}
           <div className="flex items-start justify-between gap-4 border-b px-5 py-4">
             <div>
               <h2 id="create-skill-title" className="text-sm font-semibold">
-                Create skill
+                Add skill
               </h2>
 
               <p className="mt-1 text-xs text-muted-foreground">
-                Create reusable knowledge that your agents can use.
+                Upload a complete skill package for your agents.
               </p>
             </div>
 
@@ -321,45 +296,11 @@ const CreateSkillDialog = ({
             </button>
           </div>
 
-          <div className="border-b px-5 pt-4">
-            <div className="flex h-9 w-fit items-center rounded-lg bg-muted p-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setMode("write");
-                  setError("");
-                }}
-                className={`inline-flex h-7 items-center gap-2 rounded-md px-3 text-xs font-medium transition-colors ${
-                  mode === "write"
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <FileText className="size-3.5" />
-                Write
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setMode("upload");
-                  setError("");
-                }}
-                className={`inline-flex h-7 items-center gap-2 rounded-md px-3 text-xs font-medium transition-colors ${
-                  mode === "upload"
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Upload className="size-3.5" />
-                Upload
-              </button>
-            </div>
-          </div>
-
+          {/* Body */}
           <div className="min-h-0 flex-1 overflow-y-auto p-5">
             <div className="space-y-5">
-              <div className="grid gap-4 sm:grid-cols-2">
+              {/* Skill identity */}
+              <div className="grid gap-4 sm:grid-cols-[1fr_160px]">
                 <div className="space-y-2">
                   <label htmlFor="skill-name" className="text-xs font-medium">
                     Name
@@ -376,144 +317,223 @@ const CreateSkillDialog = ({
 
                 <div className="space-y-2">
                   <label
-                    htmlFor="skill-description"
-                    className="text-xs font-medium"
+                    htmlFor="skill-version"
+                    className="flex items-center gap-1.5 text-xs font-medium"
                   >
-                    Description
+                    <GitBranch className="size-3.5 text-muted-foreground" />
+                    Version
                   </label>
 
                   <Input
-                    id="skill-description"
-                    value={description}
-                    onChange={(event) => setDescription(event.target.value)}
-                    placeholder="What does this skill teach?"
-                    className="h-9"
+                    id="skill-version"
+                    value={version}
+                    onChange={(event) => setVersion(event.target.value)}
+                    placeholder="1.0.0"
+                    className="h-9 font-mono"
                   />
                 </div>
               </div>
 
-              {mode === "write" ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="skill-content"
-                      className="text-xs font-medium"
-                    >
-                      Skill content
-                    </label>
+              {/* Description */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="skill-description"
+                  className="text-xs font-medium"
+                >
+                  Description
+                </label>
 
-                    <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                      <FileCode2 className="size-3" />
-                      Markdown / MDX
-                    </span>
+                <Input
+                  id="skill-description"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  placeholder="What does this skill teach your agents?"
+                  className="h-9"
+                />
+              </div>
+
+              {/* Upload */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium">Skill package</label>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  // @ts-expect-error webkitdirectory is supported by browsers
+                  webkitdirectory=""
+                  multiple
+                  onChange={handleFolder}
+                  className="hidden"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="group flex min-h-[190px] w-full flex-col items-center justify-center rounded-xl border border-dashed bg-muted/20 px-6 text-center transition-colors hover:bg-muted/40"
+                >
+                  <div className="mb-4 flex size-11 items-center justify-center rounded-full border bg-background shadow-sm">
+                    {hasSkillFile ? (
+                      <Check className="size-4" />
+                    ) : (
+                      <Upload className="size-4 text-muted-foreground" />
+                    )}
                   </div>
 
-                  <textarea
-                    id="skill-content"
-                    value={content}
-                    onChange={(event) => setContent(event.target.value)}
-                    placeholder={`# Web Research
+                  {hasSkillFile ? (
+                    <>
+                      <p className="text-sm font-medium">{folderName}</p>
 
-## Purpose
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {fileCount} files · SKILL.md detected
+                      </p>
 
-Describe what this skill teaches the agent.
+                      <p className="mt-3 text-[11px] text-muted-foreground">
+                        Click to replace package
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm font-medium">Upload skill folder</p>
 
-## Instructions
-
-- First instruction
-- Second instruction
-- Third instruction`}
-                    spellCheck={false}
-                    className="min-h-[360px] w-full resize-y rounded-lg border bg-muted/20 px-4 py-3 font-mono text-xs leading-6 outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-ring focus:ring-1 focus:ring-ring"
-                  />
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <label className="text-xs font-medium">MDX file</label>
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".md,.mdx,text/markdown,text/x-markdown"
-                    onChange={handleFile}
-                    className="hidden"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex min-h-[260px] w-full flex-col items-center justify-center rounded-xl border border-dashed bg-muted/20 px-6 text-center transition-colors hover:bg-muted/40"
-                  >
-                    <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-muted">
-                      <Upload className="size-4 text-muted-foreground" />
-                    </div>
-
-                    {fileName ? (
-                      <>
-                        <p className="text-sm font-medium">{fileName}</p>
-
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          Click to replace the file
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-sm font-medium">
-                          Upload a Markdown or MDX file
-                        </p>
-
-                        <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
-                          Drop your skill file here or click to browse your
-                          computer.
-                        </p>
-                      </>
-                    )}
-                  </button>
-
-                  {content && (
-                    <div className="rounded-lg border bg-muted/20">
-                      <div className="flex items-center gap-2 border-b px-3 py-2">
-                        <FileCode2 className="size-3.5 text-muted-foreground" />
-
-                        <span className="text-[11px] font-medium">Preview</span>
-                      </div>
-
-                      <pre className="max-h-48 overflow-auto p-3 font-mono text-[11px] leading-5 text-muted-foreground">
-                        {content}
-                      </pre>
-                    </div>
+                      <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
+                        Select the complete skill directory containing SKILL.md
+                        and any supporting files.
+                      </p>
+                    </>
                   )}
-                </div>
+                </button>
+              </div>
+
+              {/* Package structure */}
+              {hasSkillFile && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-xl border"
+                >
+                  <div className="border-b px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Package className="size-3.5 text-muted-foreground" />
+                      <span className="text-xs font-medium">
+                        Package contents
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-px bg-border sm:grid-cols-4">
+                    <div className="bg-background px-4 py-3">
+                      <FileCode2 className="size-3.5 text-muted-foreground" />
+                      <p className="mt-2 text-xs font-medium">SKILL.md</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        Entry point
+                      </p>
+                    </div>
+
+                    <div className="bg-background px-4 py-3">
+                      <FileText className="size-3.5 text-muted-foreground" />
+                      <p className="mt-2 text-xs font-medium">References</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        {hasReferences ? "Included" : "None"}
+                      </p>
+                    </div>
+
+                    <div className="bg-background px-4 py-3">
+                      <Activity className="size-3.5 text-muted-foreground" />
+                      <p className="mt-2 text-xs font-medium">Scripts</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        {hasScripts ? "Included" : "None"}
+                      </p>
+                    </div>
+
+                    <div className="bg-background px-4 py-3">
+                      <FileArchive className="size-3.5 text-muted-foreground" />
+                      <p className="mt-2 text-xs font-medium">Assets</p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        {hasAssets ? "Included" : "None"}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
               )}
 
-              <AnimatePresence>
-                {error && (
-                  <motion.p
-                    initial={{
-                      opacity: 0,
-                      y: -3,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      y: -3,
-                    }}
-                    className="text-xs text-destructive"
-                  >
-                    {error}
-                  </motion.p>
-                )}
-              </AnimatePresence>
+              {/* Versioning */}
+              <div className="rounded-xl border p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+                    <GitBranch className="size-3.5 text-muted-foreground" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium">Versioning</p>
+
+                    <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
+                      Skills use semantic versions. Create a new version when
+                      you change the instructions or supporting files.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Publish */}
+              <button
+                type="button"
+                onClick={() => setPublish((value) => !value)}
+                className="flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-colors hover:bg-muted/30"
+              >
+                <div
+                  className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg ${
+                    publish ? "bg-primary text-primary-foreground" : "bg-muted"
+                  }`}
+                >
+                  {publish ? (
+                    <Globe className="size-3.5" />
+                  ) : (
+                    <Lock className="size-3.5 text-muted-foreground" />
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium">
+                    {publish ? "Publish skill" : "Keep private"}
+                  </p>
+
+                  <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
+                    {publish
+                      ? "Make this skill available for use outside your private workspace."
+                      : "Keep the skill private to your workspace and connected agents."}
+                  </p>
+                </div>
+
+                <div
+                  className={`mt-1 flex h-5 w-9 shrink-0 items-center rounded-full p-0.5 transition-colors ${
+                    publish ? "bg-primary" : "bg-muted"
+                  }`}
+                >
+                  <div
+                    className={`size-4 rounded-full bg-background shadow-sm transition-transform ${
+                      publish ? "translate-x-4" : ""
+                    }`}
+                  />
+                </div>
+              </button>
+
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -3 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs text-destructive"
+                >
+                  {error}
+                </motion.p>
+              )}
             </div>
           </div>
 
+          {/* Footer */}
           <div className="flex items-center justify-between border-t px-5 py-3">
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-              <BookOpen className="size-3.5" />
-              Reusable agent knowledge
+              <Shield className="size-3.5" />
+              Skill contents remain private
             </div>
 
             <div className="flex items-center gap-2">
@@ -530,7 +550,7 @@ Describe what this skill teaches the agent.
                 onClick={handleCreate}
                 className="h-8 rounded-md bg-primary px-3.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Create skill
+                {publish ? "Create & publish" : "Create skill"}
               </button>
             </div>
           </div>
@@ -546,30 +566,6 @@ type SkillInfoDialogProps = {
 };
 
 const SkillInfoDialog = ({ skill, onClose }: SkillInfoDialogProps) => {
-  const [copied, setCopied] = React.useState(false);
-
-  React.useEffect(() => {
-    setCopied(false);
-  }, [skill]);
-
-  const handleCopy = async () => {
-    if (!skill) {
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(skill.content);
-
-      setCopied(true);
-
-      window.setTimeout(() => {
-        setCopied(false);
-      }, 1600);
-    } catch {
-      // Clipboard access can be unavailable in some environments.
-    }
-  };
-
   if (!skill) {
     return null;
   }
@@ -588,53 +584,45 @@ const SkillInfoDialog = ({ skill, onClose }: SkillInfoDialogProps) => {
         }}
       >
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 12,
-            scale: 0.98,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-          }}
-          exit={{
-            opacity: 0,
-            y: 8,
-            scale: 0.98,
-          }}
-          transition={{
-            duration: 0.18,
-            ease: "easeOut",
-          }}
-          className="flex max-h-[calc(100vh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-xl border bg-background shadow-2xl"
+          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 8, scale: 0.98 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-xl border bg-background shadow-2xl"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="skill-info-title"
         >
           {/* Header */}
           <div className="flex items-start justify-between gap-4 border-b px-5 py-4">
             <div className="flex min-w-0 items-start gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/40">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-muted/40">
                 <FileCode2 className="size-4 text-muted-foreground" />
               </div>
 
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2
-                    id="skill-info-title"
-                    className="truncate text-sm font-semibold"
-                  >
+                  <h2 className="truncate text-sm font-semibold">
                     {skill.name}
                   </h2>
 
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
-                    <FileCode2 className="size-3" />
-                    MDX
+                  <span className="rounded-md bg-muted px-2 py-1 font-mono text-[10px] font-medium text-muted-foreground">
+                    v{skill.version}
                   </span>
+
+                  {skill.published ? (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
+                      <Globe className="size-3" />
+                      Published
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
+                      <Lock className="size-3" />
+                      Private
+                    </span>
+                  )}
                 </div>
 
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   {skill.description}
                 </p>
               </div>
@@ -644,63 +632,159 @@ const SkillInfoDialog = ({ skill, onClose }: SkillInfoDialogProps) => {
               type="button"
               onClick={onClose}
               className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="Close"
             >
               <X className="size-4" />
             </button>
           </div>
 
-          {/* Metadata */}
-          <div className="flex items-center justify-between border-b px-5 py-2.5">
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-              <BookOpen className="size-3.5" />
-              Skill knowledge
-            </div>
-
-            <span className="text-[11px] text-muted-foreground">
-              Updated {skill.updated}
-            </span>
-          </div>
-
           {/* Content */}
           <div className="min-h-0 flex-1 overflow-y-auto p-5">
-            <div className="overflow-hidden rounded-xl border bg-muted/20">
-              <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-2">
-                <div className="flex items-center gap-2">
-                  <FileCode2 className="size-3.5 text-muted-foreground" />
+            <div className="space-y-5">
+              {/* Usage */}
+              <section>
+                <div className="mb-3 flex items-center gap-2">
+                  <Activity className="size-3.5 text-muted-foreground" />
+                  <h3 className="text-xs font-medium">Usage</h3>
+                </div>
 
-                  <span className="text-[11px] font-medium">
-                    {skill.name}.mdx
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="rounded-lg border p-3">
+                    <div className="flex items-center gap-2">
+                      <Bot className="size-3.5 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">
+                        Agents
+                      </span>
+                    </div>
+
+                    <p className="mt-2 text-lg font-semibold">{skill.agents}</p>
+                  </div>
+
+                  <div className="rounded-lg border p-3">
+                    <div className="flex items-center gap-2">
+                      <Activity className="size-3.5 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">
+                        Runs
+                      </span>
+                    </div>
+
+                    <p className="mt-2 text-lg font-semibold">
+                      {skill.runs.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg border p-3">
+                    <div className="flex items-center gap-2">
+                      <GitBranch className="size-3.5 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">
+                        Version
+                      </span>
+                    </div>
+
+                    <p className="mt-2 font-mono text-sm font-semibold">
+                      {skill.version}
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* About */}
+              <section className="rounded-xl border p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+                    <FileText className="size-3.5 text-muted-foreground" />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xs font-medium">About this skill</h3>
+
+                    <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+                      {skill.description}
+                    </p>
+
+                    <p className="mt-3 text-[11px] leading-5 text-muted-foreground">
+                      This skill provides specialized knowledge that connected
+                      agents can use when performing relevant tasks. Its
+                      internal instructions and supporting resources are kept
+                      private.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Package */}
+              <section>
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Package className="size-3.5 text-muted-foreground" />
+                    <h3 className="text-xs font-medium">Skill package</h3>
+                  </div>
+
+                  <span className="text-[10px] text-muted-foreground">
+                    {skill.fileCount} files
                   </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="size-3.5" />
-                      Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="size-3.5" />
-                      Copy
-                    </>
-                  )}
-                </button>
-              </div>
+                <div className="overflow-hidden rounded-xl border">
+                  <div className="flex items-center gap-3 border-b px-4 py-3">
+                    <FileCode2 className="size-4 text-muted-foreground" />
 
-              <pre className="max-h-[55vh] overflow-auto p-5 font-mono text-xs leading-6 text-foreground/90">
-                <code>{skill.content}</code>
-              </pre>
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium">SKILL.md</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        Skill entry point
+                      </p>
+                    </div>
+
+                    <Check className="ml-auto size-3.5" />
+                  </div>
+
+                  {skill.hasReferences && (
+                    <div className="flex items-center gap-3 border-b px-4 py-3">
+                      <FileText className="size-4 text-muted-foreground" />
+                      <span className="text-xs">references/</span>
+                    </div>
+                  )}
+
+                  {skill.hasScripts && (
+                    <div className="flex items-center gap-3 border-b px-4 py-3">
+                      <Activity className="size-4 text-muted-foreground" />
+                      <span className="text-xs">scripts/</span>
+                    </div>
+                  )}
+
+                  {skill.hasAssets && (
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <FileArchive className="size-4 text-muted-foreground" />
+                      <span className="text-xs">assets/</span>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* Privacy */}
+              <div className="flex items-start gap-3 rounded-xl border bg-muted/20 p-4">
+                <Shield className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+
+                <div>
+                  <p className="text-xs font-medium">
+                    Skill contents are private
+                  </p>
+
+                  <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
+                    Agents can use this skill when connected, but its underlying
+                    instructions and files aren't exposed in this view.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end border-t px-5 py-3">
+          <div className="flex items-center justify-between border-t px-5 py-3">
+            <span className="text-[11px] text-muted-foreground">
+              Last used {skill.lastUsed}
+            </span>
+
             <button
               type="button"
               onClick={onClose}
@@ -718,9 +802,7 @@ const SkillInfoDialog = ({ skill, onClose }: SkillInfoDialogProps) => {
 export const Skills = () => {
   const [search, setSearch] = React.useState("");
   const [skills, setSkills] = React.useState<Skill[]>(initialSkills);
-
   const [createOpen, setCreateOpen] = React.useState(false);
-
   const [selectedSkill, setSelectedSkill] = React.useState<Skill | null>(null);
 
   const normalizedSearch = search.trim().toLowerCase();
@@ -733,8 +815,7 @@ export const Skills = () => {
     return skills.filter(
       (skill) =>
         skill.name.toLowerCase().includes(normalizedSearch) ||
-        skill.description.toLowerCase().includes(normalizedSearch) ||
-        skill.content.toLowerCase().includes(normalizedSearch),
+        skill.description.toLowerCase().includes(normalizedSearch),
     );
   }, [normalizedSearch, skills]);
 
@@ -748,25 +829,16 @@ export const Skills = () => {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
           {/* Header */}
           <motion.div
-            initial={{
-              opacity: 0,
-              y: 6,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.22,
-              ease: "easeOut",
-            }}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
             className="flex items-center justify-between gap-4"
           >
             <div className="min-w-0">
               <h1 className="text-xl font-semibold tracking-tight">Skills</h1>
 
               <p className="mt-1 text-sm text-muted-foreground">
-                Reusable knowledge for your AI agents
+                Reusable capabilities for your AI agents
               </p>
             </div>
 
@@ -776,39 +848,14 @@ export const Skills = () => {
               className="inline-flex h-9 shrink-0 items-center gap-2 rounded-lg bg-primary px-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               <Plus className="size-4" />
-
-              <span className="hidden sm:inline">Create skill</span>
+              <span className="hidden sm:inline">Add skill</span>
             </button>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              duration: 0.2,
-              delay: 0.05,
-            }}
-          >
-            <Separator />
-          </motion.div>
+          <Separator />
 
           {/* Search */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 5,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.2,
-              delay: 0.07,
-              ease: "easeOut",
-            }}
-            className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-          >
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full sm:max-w-md">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
@@ -816,67 +863,19 @@ export const Skills = () => {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search skills..."
-                className="h-10 pl-9 pr-9"
+                className="h-10 pl-9"
               />
-
-              <AnimatePresence>
-                {search && (
-                  <motion.button
-                    initial={{
-                      opacity: 0,
-                      scale: 0.8,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      scale: 0.8,
-                    }}
-                    transition={{
-                      duration: 0.12,
-                    }}
-                    type="button"
-                    onClick={() => setSearch("")}
-                    className="absolute right-2 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                    aria-label="Clear search"
-                  >
-                    <X className="size-4" />
-                  </motion.button>
-                )}
-              </AnimatePresence>
             </div>
 
-            <AnimatePresence mode="wait">
-              {normalizedSearch && (
-                <motion.p
-                  key={filteredSkills.length}
-                  initial={{
-                    opacity: 0,
-                    y: 3,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    y: -3,
-                  }}
-                  transition={{
-                    duration: 0.14,
-                  }}
-                  className="text-xs text-muted-foreground"
-                >
-                  {filteredSkills.length}{" "}
-                  {filteredSkills.length === 1 ? "skill" : "skills"}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.div>
+            {normalizedSearch && (
+              <p className="text-xs text-muted-foreground">
+                {filteredSkills.length}{" "}
+                {filteredSkills.length === 1 ? "skill" : "skills"}
+              </p>
+            )}
+          </div>
 
-          {/* Skill library */}
+          {/* Cards */}
           <div className="pb-8">
             <AnimatePresence mode="popLayout">
               {filteredSkills.length > 0 ? (
@@ -888,18 +887,9 @@ export const Skills = () => {
                     <motion.button
                       key={skill.id}
                       layout
-                      initial={{
-                        opacity: 0,
-                        y: 8,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      exit={{
-                        opacity: 0,
-                        scale: 0.98,
-                      }}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
                       transition={{
                         duration: 0.18,
                         delay: index * 0.035,
@@ -907,7 +897,7 @@ export const Skills = () => {
                       }}
                       type="button"
                       onClick={() => setSelectedSkill(skill)}
-                      className="group flex min-h-[158px] flex-col rounded-xl border bg-background p-4 text-left transition-colors hover:bg-muted/40"
+                      className="group flex min-h-[190px] flex-col rounded-xl border bg-background p-4 text-left transition-colors hover:bg-muted/40"
                     >
                       {/* Top */}
                       <div className="flex items-start justify-between gap-3">
@@ -915,9 +905,16 @@ export const Skills = () => {
                           <FileCode2 className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
                         </div>
 
-                        <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
-                          <FileCode2 className="size-3" />
-                          MDX
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-md bg-muted px-2 py-1 font-mono text-[10px] font-medium text-muted-foreground">
+                            v{skill.version}
+                          </span>
+
+                          {skill.published ? (
+                            <Globe className="size-3.5 text-muted-foreground" />
+                          ) : (
+                            <Lock className="size-3.5 text-muted-foreground" />
+                          )}
                         </div>
                       </div>
 
@@ -932,64 +929,56 @@ export const Skills = () => {
                         </p>
                       </div>
 
+                      {/* Statistics */}
+                      <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
+                        <div className="rounded-lg bg-muted/50 px-3 py-2">
+                          <div className="flex items-center gap-1.5">
+                            <Bot className="size-3 text-muted-foreground" />
+                            <span className="text-[10px] text-muted-foreground">
+                              Agents
+                            </span>
+                          </div>
+
+                          <p className="mt-1 text-xs font-semibold">
+                            {skill.agents}
+                          </p>
+                        </div>
+
+                        <div className="rounded-lg bg-muted/50 px-3 py-2">
+                          <div className="flex items-center gap-1.5">
+                            <Activity className="size-3 text-muted-foreground" />
+                            <span className="text-[10px] text-muted-foreground">
+                              Runs
+                            </span>
+                          </div>
+
+                          <p className="mt-1 text-xs font-semibold">
+                            {skill.runs.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+
                       {/* Footer */}
-                      <div className="mt-auto flex items-center justify-between pt-4 text-[11px] text-muted-foreground">
-                        <span>{skill.updated}</span>
+                      <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground">
+                        <span>Updated {skill.updated}</span>
 
                         <span className="transition-colors group-hover:text-foreground">
-                          Open skill
+                          View details
                         </span>
                       </div>
                     </motion.button>
                   ))}
                 </motion.div>
               ) : (
-                <motion.div
-                  key="empty"
-                  initial={{
-                    opacity: 0,
-                    y: 6,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    y: -4,
-                  }}
-                  transition={{
-                    duration: 0.2,
-                    ease: "easeOut",
-                  }}
-                  className="flex min-h-[360px] flex-col items-center justify-center rounded-xl border border-dashed px-6 text-center"
-                >
-                  <motion.div
-                    initial={{
-                      opacity: 0,
-                      scale: 0.9,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                    }}
-                    transition={{
-                      duration: 0.18,
-                      delay: 0.05,
-                    }}
-                    className="mb-4 flex size-10 items-center justify-center rounded-full bg-muted"
-                  >
+                <div className="flex min-h-[360px] flex-col items-center justify-center rounded-xl border border-dashed px-6 text-center">
+                  <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-muted">
                     <Search className="size-4 text-muted-foreground" />
-                  </motion.div>
+                  </div>
 
                   <h3 className="text-sm font-medium">No skills found</h3>
 
-                  <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-                    No skills match{" "}
-                    <span className="font-medium text-foreground">
-                      "{search}"
-                    </span>
-                    .
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    No skills match "{search}".
                   </p>
 
                   <button
@@ -999,7 +988,7 @@ export const Skills = () => {
                   >
                     Clear search
                   </button>
-                </motion.div>
+                </div>
               )}
             </AnimatePresence>
           </div>
