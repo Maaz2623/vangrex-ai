@@ -1,11 +1,7 @@
-import React from 'react'
+import { Tools } from "@/features/tools/components/tools";
 
 const ToolsPage = () => {
-  return (
-    <div>
-      ToolsPage
-    </div>
-  )
-}
+  return <Tools />;
+};
 
-export default ToolsPage
+export default ToolsPage;
