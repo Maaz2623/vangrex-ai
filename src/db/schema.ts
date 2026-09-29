@@ -7,7 +7,95 @@ import {
   index,
   uuid,
   jsonb,
+  unique,
 } from "drizzle-orm/pg-core";
+
+export const organizationsTable = pgTable(
+  "organization",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    name: text("name").notNull(),
+
+    slug: text("slug").notNull().unique(),
+
+    description: text("description"),
+
+    logo: text("logo"),
+
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "restrict" }),
+
+    plan: text("plan").notNull().default("free"),
+
+    status: text("status").notNull().default("active"),
+
+    settings: jsonb("settings")
+      .$type<{
+        defaultModel?: string;
+        timezone?: string;
+      }>()
+      .notNull()
+      .default({}),
+
+    metadata: jsonb("metadata")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default({}),
+
+    billingCustomerId: text("billing_customer_id"),
+
+    billingSubscriptionId: text("billing_subscription_id"),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("organization_ownerId_idx").on(table.ownerId),
+    index("organization_status_idx").on(table.status),
+  ],
+);
+
+export const organizationMember = pgTable(
+  "organization_member",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizationsTable.id, { onDelete: "cascade" }),
+
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+
+    role: text("role").notNull().default("member"),
+
+    status: text("status").notNull().default("active"),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    unique("organizationMember_organizationId_userId_unique").on(
+      table.organizationId,
+      table.userId,
+    ),
+
+    index("organizationMember_organizationId_idx").on(table.organizationId),
+
+    index("organizationMember_userId_idx").on(table.userId),
+  ],
+);
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -87,6 +175,8 @@ export const relations = defineRelations(
     account,
     verification,
     session,
+    organizationsTable,
+    organizationMember,
   },
   (r) => ({
     user: {
@@ -98,6 +188,14 @@ export const relations = defineRelations(
       accounts: r.many.account({
         from: r.user.id,
         to: r.account.userId,
+      }),
+      ownedOrganizations: r.many.organizationsTable({
+        from: r.user.id,
+        to: r.organizationsTable.ownerId,
+      }),
+      organizationMemberships: r.many.organizationMember({
+        from: r.user.id,
+        to: r.organizationMember.userId,
       }),
     },
 
@@ -112,6 +210,33 @@ export const relations = defineRelations(
     account: {
       user: r.one.user({
         from: r.account.userId,
+        to: r.user.id,
+        optional: false,
+      }),
+    },
+
+    organization: {
+      owner: r.one.user({
+        from: r.organizationsTable.ownerId,
+        to: r.user.id,
+        optional: false,
+      }),
+
+      members: r.many.organizationMember({
+        from: r.organizationsTable.id,
+        to: r.organizationMember.organizationId,
+      }),
+    },
+
+    organizationMember: {
+      organization: r.one.organizationsTable({
+        from: r.organizationMember.organizationId,
+        to: r.organizationsTable.id,
+        optional: false,
+      }),
+
+      user: r.one.user({
+        from: r.organizationMember.userId,
         to: r.user.id,
         optional: false,
       }),
