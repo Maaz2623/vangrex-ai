@@ -42,6 +42,7 @@ const agents: Agent[] = [
     version: "1.4.0",
     status: "Published",
     usage: "2.8k runs",
+    image: "/auth/illustration.png",
     model: "GPT-5",
     tools: ["Web Search", "Browser Agent"],
     capabilities: ["web.search", "web.fetch", "files.read", "files.write"],
@@ -58,6 +59,8 @@ const agents: Agent[] = [
     icon: Bot,
     version: "1.1.0",
     status: "Published",
+    image: "/auth/illustration.png",
+
     usage: "1.9k runs",
     model: "GPT-5",
     tools: ["Code Runner", "GitHub Reader"],
@@ -75,6 +78,8 @@ const agents: Agent[] = [
     icon: Zap,
     version: "0.9.0",
     status: "Published",
+    image: "/auth/illustration.png",
+
     usage: "842 runs",
     model: "GPT-5",
     tools: ["Browser Agent"],
@@ -96,6 +101,8 @@ const agents: Agent[] = [
     category: "Analytics",
     icon: Bot,
     version: "0.7.0",
+    image: "/auth/illustration.png",
+
     status: "Published",
     usage: "516 runs",
     model: "GPT-5",
@@ -113,6 +120,8 @@ const agents: Agent[] = [
     category: "Support",
     icon: Bot,
     version: "0.3.0",
+    image: "/auth/illustration.png",
+
     status: "Draft",
     usage: "—",
     model: "GPT-5",
@@ -134,6 +143,8 @@ const agents: Agent[] = [
       "Create, rewrite, summarize, and adapt content for different audiences and formats.",
     category: "Content",
     icon: Sparkles,
+    image: "/auth/illustration.png",
+
     version: "0.6.0",
     status: "Published",
     usage: "1.2k runs",
