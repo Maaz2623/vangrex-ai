@@ -1,7 +1,8 @@
+import { Skills } from "@/features/skills/components/skills";
 import React from "react";
 
 const SkillsPage = () => {
-  return <div>Skills Page</div>;
+  return <Skills />;
 };
 
 export default SkillsPage;
