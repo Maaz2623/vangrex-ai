@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Bot, Settings2, SlidersHorizontal, Workflow } from "lucide-react";
+import {
+  Bot,
+  Settings2,
+  SlidersHorizontal,
+  Sparkles,
+  Workflow,
+  Wrench,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 import {
@@ -28,6 +35,16 @@ const data = {
       title: "Agents",
       url: "/agents",
       icon: Bot,
+    },
+    {
+      title: "Tools",
+      url: "/tools",
+      icon: Wrench,
+    },
+    {
+      title: "Skills",
+      url: "/skills",
+      icon: Sparkles,
     },
     {
       title: "Models",
