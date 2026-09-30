@@ -5,35 +5,43 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 export function CTA() {
   return (
-    <section className="px-4 pb-24 pt-12 sm:pb-32">
+    <section className="px-5 pb-24 pt-10 sm:px-8 sm:pb-32">
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl border border-border bg-muted/30 px-6 py-20 text-center sm:px-12"
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.35 }}
+        transition={{ duration: 0.55 }}
+        className="relative mx-auto max-w-7xl overflow-hidden border border-border bg-foreground px-6 py-16 text-background sm:px-12 sm:py-20"
       >
-        <div className="absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/10 blur-[100px]" />
-
-        <div className="relative">
-          <div className="mx-auto flex size-11 items-center justify-center rounded-xl border border-border bg-background shadow-sm">
-            <Sparkles className="size-5 text-primary" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-16 -top-40 size-[30rem] rounded-full border border-background/10"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-2 -top-24 size-[22rem] rounded-full border border-background/10"
+        />
+        <div className="relative grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p className="mb-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-background/60">
+              <Sparkles className="size-4 text-primary" />
+              Your workspace is waiting
+            </p>
+            <h2 className="max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] sm:text-6xl">
+              Build your AI workspace.
+            </h2>
+            <p className="mt-5 max-w-xl text-sm leading-6 text-background/65 sm:text-base">
+              Create agents. Choose models. Build workflows. Put your AI stack
+              exactly where you want it.
+            </p>
           </div>
 
-          <h2 className="mx-auto mt-7 max-w-2xl text-3xl font-semibold tracking-[-0.03em] sm:text-5xl">
-            Build your AI workspace.
-          </h2>
-
-          <p className="mx-auto mt-5 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Create agents. Choose models. Build workflows. Put your AI stack
-            exactly where you want it.
-          </p>
-
           <a
-            href="#"
-            className="group mt-8 inline-flex h-11 items-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-all hover:gap-3 hover:shadow-lg"
+            href="/auth"
+            className="group inline-flex h-12 items-center justify-between gap-8 bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-background hover:text-foreground"
           >
             Get started with Vangrex
-            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </motion.div>

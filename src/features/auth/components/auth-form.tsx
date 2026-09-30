@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { FaGithub } from "react-icons/fa";
-import { Loader2 } from "lucide-react";
+import { ArrowUpRight, Loader2, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,9 +29,7 @@ export const AuthView = () => {
     setLoadingProvider(provider);
 
     try {
-      await authClient.signIn.social({
-        provider,
-      });
+      await authClient.signIn.social({ provider });
     } catch {
       setIsLoading(false);
       setLoadingProvider(null);
@@ -40,60 +38,84 @@ export const AuthView = () => {
 
   return (
     <main className="relative min-h-svh overflow-hidden bg-background">
-      {/* Subtle background */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-40 -top-40 size-[28rem] rounded-full bg-primary/[0.07] blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 size-[32rem] rounded-full bg-primary/[0.05] blur-3xl" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.045]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+          maskImage: "linear-gradient(to bottom, black, transparent 85%)",
+        }}
+      />
 
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-          }}
-        />
-      </div>
-
-      <div className="relative grid min-h-svh lg:grid-cols-2">
-        {/* Illustration */}
+      <div className="relative grid min-h-svh lg:grid-cols-[1.05fr_0.95fr]">
         <motion.section
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="relative hidden overflow-hidden lg:block"
+          transition={{ duration: 0.7 }}
+          aria-label="Vangrex workspace"
+          className="relative hidden min-h-svh overflow-hidden border-r border-border bg-foreground lg:block"
         >
           <img
             src="/auth/illustration.png"
             alt=""
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 size-full object-cover opacity-75"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/15 to-foreground/5" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/10" />
 
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-background/20" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent" />
+          <a
+            href="/"
+            className="absolute left-10 top-9 z-10 inline-flex items-center gap-3 text-background"
+            aria-label="Vangrex home"
+          >
+            <img src="/logo.png" alt="" className="size-9 object-contain" />
+            <span className="text-sm font-semibold tracking-[0.14em]">
+              VANGREX
+            </span>
+          </a>
+
+          <div className="absolute bottom-10 left-10 right-10 z-10 text-background">
+            <p className="mb-5 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-background/65">
+              <span className="h-px w-8 bg-primary" />
+              Your AI workspace
+            </p>
+            <h1 className="max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.055em] xl:text-6xl">
+              Make room for
+              <br />
+              <span className="font-serif font-normal italic text-primary">
+                better thinking.
+              </span>
+            </h1>
+            <div className="mt-8 flex items-center gap-3 border-t border-background/20 pt-5 text-xs text-background/65">
+              <span className="font-mono text-primary">01—04</span>
+              <span>Agents, models, and workflows in one place.</span>
+            </div>
+          </div>
+
+          <div className="absolute right-8 top-1/2 z-10 hidden -translate-y-1/2 xl:block">
+            <div className="flex flex-col items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em] text-background/50 [writing-mode:vertical-rl]">
+              <span className="h-10 w-px bg-background/30" />
+              Vangrex workspace
+            </div>
+          </div>
         </motion.section>
 
-        {/* Authentication */}
-        <section className="relative flex min-h-svh items-center justify-center px-6 py-12">
-          {/* Mobile brand */}
-          <motion.div
+        <section className="relative flex min-h-svh items-center justify-center px-5 py-24 sm:px-10 lg:px-12">
+          <motion.a
+            href="/"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="absolute left-6 top-6 lg:hidden"
+            className="absolute left-5 top-6 inline-flex items-center gap-2.5 sm:left-10 lg:hidden"
+            aria-label="Vangrex home"
           >
-            <a
-              href="#"
-              className="flex items-center gap-2.5 font-semibold tracking-tight"
-            >
-              <img
-                src="/logo.png"
-                alt="Vangrex"
-                className="size-8 rounded-lg object-contain"
-              />
-              <span>Vangrex</span>
-            </a>
-          </motion.div>
+            <img src="/logo.png" alt="" className="size-8 object-contain" />
+            <span className="text-sm font-semibold tracking-[0.14em]">
+              VANGREX
+            </span>
+          </motion.a>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -102,92 +124,87 @@ export const AuthView = () => {
               duration: 0.55,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="relative z-10 w-full max-w-sm"
+            className="w-full max-w-[390px]"
           >
-            <Card className="relative overflow-hidden rounded-2xl border-border/60 bg-card shadow-xl shadow-black/[0.04]">
-              {/* Small top accent */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+            <div className="mb-8">
+              <p className="mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-primary">
+                <span className="h-px w-7 bg-primary" />
+                Secure access
+              </p>
+              <h2 className="text-3xl font-semibold leading-[1.05] tracking-[-0.05em] sm:text-4xl">
+                Welcome to Vangrex
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Sign in to continue to your workspace.
+              </p>
+            </div>
 
-              <CardHeader className="space-y-5 pb-6 pt-8">
-                <div className="flex justify-center">
-                  <div className="relative">
-                    <div className="absolute inset-0 rounded-xl bg-primary/10 blur-xl" />
+            <Card className="overflow-hidden rounded-none border-border bg-card shadow-[0_24px_70px_-48px_rgba(0,0,0,0.35)]">
+              <div className="h-0.5 w-full bg-primary" />
 
-                    <img
-                      src="/logo.png"
-                      alt="Vangrex"
-                      className="relative size-12 rounded-xl object-contain"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <CardTitle className="text-center text-2xl font-semibold tracking-tight">
-                    Welcome to Vangrex
-                  </CardTitle>
-
-                  <CardDescription className="text-center leading-6">
-                    Sign in to continue to your workspace.
-                  </CardDescription>
-                </div>
+              <CardHeader className="sr-only">
+                <CardTitle>Sign in to Vangrex</CardTitle>
+                <CardDescription>
+                  Choose a provider to continue to your workspace.
+                </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-6 pb-8">
+              <CardContent className="space-y-6 p-5 sm:p-7">
                 <div className="space-y-3">
-                  {/* Google */}
                   <Button
                     type="button"
                     variant="outline"
                     disabled={isLoading}
                     onClick={() => handleSignIn("google")}
-                    className="h-11 w-full justify-center gap-2.5 rounded-xl bg-background transition-colors hover:bg-muted/60"
+                    className="group h-12 w-full justify-between rounded-none border-border bg-background px-4 text-sm font-medium transition-colors hover:border-foreground/30 hover:bg-muted/50"
                   >
-                    {loadingProvider === "google" ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <GoogleIcon />
-                    )}
-
-                    <span>
+                    <span className="flex items-center gap-3">
+                      {loadingProvider === "google" ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <GoogleIcon />
+                      )}
                       {loadingProvider === "google"
                         ? "Signing in..."
                         : "Continue with Google"}
                     </span>
+                    {loadingProvider !== "google" && (
+                      <ArrowUpRight className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+                    )}
                   </Button>
 
-                  {/* GitHub */}
                   <Button
                     type="button"
                     variant="outline"
                     disabled={isLoading}
                     onClick={() => handleSignIn("github")}
-                    className="h-11 w-full justify-center gap-2.5 rounded-xl bg-background transition-colors hover:bg-muted/60"
+                    className="group h-12 w-full justify-between rounded-none border-border bg-background px-4 text-sm font-medium transition-colors hover:border-foreground/30 hover:bg-muted/50"
                   >
-                    {loadingProvider === "github" ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <FaGithub className="size-4" />
-                    )}
-
-                    <span>
+                    <span className="flex items-center gap-3">
+                      {loadingProvider === "github" ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <FaGithub className="size-4" />
+                      )}
                       {loadingProvider === "github"
                         ? "Signing in..."
                         : "Continue with GitHub"}
                     </span>
+                    {loadingProvider !== "github" && (
+                      <ArrowUpRight className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
+                    )}
                   </Button>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div className="h-px flex-1 bg-border" />
-
-                  <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/60">
-                    Secure access
+                  <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground/70">
+                    Encrypted sign-in
                   </span>
-
                   <div className="h-px flex-1 bg-border" />
                 </div>
 
-                <p className="text-center text-xs leading-5 text-muted-foreground">
+                <p className="text-xs leading-5 text-muted-foreground">
                   By continuing, you agree to Vangrex&apos;s{" "}
                   <button
                     type="button"
@@ -220,9 +237,13 @@ export const AuthView = () => {
               </button>
             </p>
 
-            <div className="mt-7 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/50">
-              <span className="size-1.5 rounded-full bg-primary/60" />
+            <div className="mt-8 flex items-center justify-center gap-2 border-t border-border pt-5 text-[10px] text-muted-foreground">
+              <ShieldCheck className="size-3.5 text-primary" />
               Secure authentication
+              <span className="mx-1 text-border">/</span>
+              <span className="font-mono uppercase tracking-[0.12em]">
+                Vangrex
+              </span>
             </div>
           </motion.div>
         </section>

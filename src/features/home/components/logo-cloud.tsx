@@ -1,19 +1,21 @@
-export function LogoCloud() {
-  const items = ["OpenAI", "Anthropic", "Google", "Mistral", "Meta", "AI SDK"];
+const items = ["OpenAI", "Anthropic", "Google", "Mistral", "Meta", "AI SDK"];
 
+export function LogoCloud() {
   return (
-    <section className="border-y border-border/60 py-10">
-      <div className="mx-auto max-w-6xl px-4">
-        <p className="mb-7 text-center text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+    <section className="border-y border-border">
+      <div className="mx-auto grid max-w-7xl gap-6 px-5 py-7 sm:px-8 md:grid-cols-[220px_1fr] md:items-center">
+        <p className="max-w-[180px] font-mono text-[9px] uppercase leading-5 tracking-[0.17em] text-muted-foreground">
           Built for the modern AI stack
         </p>
-
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 text-sm font-medium text-muted-foreground/70 sm:gap-x-14">
-          {items.map((item) => (
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-6">
+          {items.map((item, index) => (
             <span
               key={item}
-              className="transition-colors hover:text-foreground"
+              className="flex items-center gap-2 text-sm font-medium tracking-tight text-foreground/65 transition-colors hover:text-primary"
             >
+              <span className="font-mono text-[9px] text-primary/70">
+                0{index + 1}
+              </span>
               {item}
             </span>
           ))}

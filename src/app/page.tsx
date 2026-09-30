@@ -16,9 +16,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
       <Navbar />
-      <div className="mt-10">
-        <Hero />
-      </div>
+      <Hero />
       <LogoCloud />
       <Features />
       <AgentsSection />

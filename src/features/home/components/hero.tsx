@@ -5,174 +5,227 @@ import { ArrowRight, Bot, ChevronRight, Sparkles, Zap } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative isolate flex min-h-[850px] items-center overflow-hidden pt-24">
-      {/* Background grid */}
+    <section className="relative isolate overflow-hidden pb-20 pt-36 sm:pb-28 sm:pt-44">
       <div
-        className="absolute inset-0 -z-20 opacity-[0.035]"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.055]"
         style={{
           backgroundImage:
             "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
+          backgroundSize: "64px 64px",
+          maskImage: "linear-gradient(to bottom, black, transparent 80%)",
         }}
       />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-40 top-12 -z-10 size-[32rem] rounded-full border border-primary/15 sm:right-[-9rem]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 top-28 -z-10 size-[21rem] rounded-full border border-primary/10"
+      />
 
-      {/* Glow */}
-      <div className="absolute left-1/2 top-1/4 -z-10 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]" />
-
-      <div className="mx-auto w-full max-w-6xl px-4">
-        <div className="mx-auto max-w-4xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur"
-          >
-            <Sparkles className="size-3.5 text-primary" />
-            The AI workspace for agents
-            <ChevronRight className="size-3" />
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.05 }}
-            className="text-balance text-5xl font-semibold tracking-[-0.04em] sm:text-6xl md:text-7xl lg:text-[84px]"
-          >
-            One place for
-            <br />
-            <span className="bg-gradient-to-b from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
-              every AI agent.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.12 }}
-            className="mx-auto mt-7 max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg"
-          >
-            Build, configure, and use powerful AI agents with the models you
-            choose. Vangrex brings multi-agent and multi-model workflows into
-            one beautifully simple workspace.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.18 }}
-            className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
-          >
-            <a
-              href="#"
-              className="group inline-flex h-11 items-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/10 transition-all hover:gap-3 hover:shadow-xl"
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <div className="grid items-end gap-10 lg:grid-cols-[1fr_0.72fr] lg:gap-16">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45 }}
+              className="mb-7 flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground"
             >
-              Start building
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
+              <span className="flex size-7 items-center justify-center border border-primary/30 text-primary">
+                <Sparkles className="size-3.5" />
+              </span>
+              The AI workspace for agents
+              <ChevronRight className="size-3 text-primary" />
+            </motion.div>
 
-            <a
-              href="#features"
-              className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-background px-6 text-sm font-medium transition-colors hover:bg-muted"
+            <motion.h1
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.05,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="max-w-4xl text-balance text-5xl font-semibold leading-[0.98] tracking-[-0.065em] sm:text-7xl lg:text-[6.4rem]"
             >
-              Explore Vangrex
-            </a>
-          </motion.div>
+              One place for
+              <br />
+              <span className="font-serif font-normal italic tracking-[-0.055em] text-primary">
+                every AI agent.
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.13 }}
+              className="mt-7 max-w-xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8"
+            >
+              Build, configure, and use powerful AI agents with the models you
+              choose. Vangrex brings multi-agent and multi-model workflows into
+              one beautifully simple workspace.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mt-8 flex flex-col gap-3 sm:flex-row"
+            >
+              <a
+                href="/auth"
+                className="group inline-flex h-12 items-center justify-center gap-5 bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-foreground hover:text-background"
+              >
+                Start building
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </a>
+              <a
+                href="#features"
+                className="inline-flex h-12 items-center justify-center border border-border px-5 text-sm font-medium transition-colors hover:bg-muted"
+              >
+                Explore Vangrex
+              </a>
+            </motion.div>
+          </div>
+
+          <motion.aside
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.22 }}
+            className="hidden border-l border-border pl-6 pb-2 lg:block"
+          >
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              Workspace / 01
+            </p>
+            <p className="mt-5 max-w-xs font-serif text-2xl leading-snug">
+              Give every kind of thinking its own place to work.
+            </p>
+            <div className="mt-8 flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary/40 motion-reduce:animate-none" />
+                <span className="relative inline-flex size-2 rounded-full bg-primary" />
+              </span>
+              One workspace. Many ways forward.
+            </div>
+          </motion.aside>
         </div>
 
-        {/* Product visualization */}
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="relative mx-auto mt-20 max-w-5xl"
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mt-16 sm:mt-24"
         >
-          <div className="absolute -inset-10 -z-10 rounded-[40px] bg-primary/5 blur-3xl" />
-
-          <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-2xl shadow-black/5">
-            {/* fake window header */}
-            <div className="flex h-12 items-center border-b border-border px-4">
-              <div className="flex gap-1.5">
-                <span className="size-2.5 rounded-full bg-muted-foreground/30" />
-                <span className="size-2.5 rounded-full bg-muted-foreground/30" />
-                <span className="size-2.5 rounded-full bg-muted-foreground/30" />
+          <div className="absolute -inset-4 -z-10 border border-primary/10 sm:-inset-7" />
+          <div className="overflow-hidden border border-border bg-card shadow-[0_32px_90px_-50px_rgba(0,0,0,0.38)]">
+            <div className="flex h-12 items-center justify-between border-b border-border px-4 sm:px-6">
+              <div className="flex items-center gap-2">
+                <span className="size-2 rounded-full bg-primary" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                  Vangrex / workspace
+                </span>
               </div>
-
-              <div className="mx-auto flex items-center gap-2 rounded-md border border-border bg-muted/50 px-3 py-1 text-[11px] text-muted-foreground">
-                <span className="size-1.5 rounded-full bg-green-500" />
-                Vangrex
+              <div className="hidden items-center gap-2 font-mono text-[10px] text-muted-foreground sm:flex">
+                <span className="size-1.5 rounded-full bg-emerald-500" />
+                SYSTEM READY
               </div>
-
-              <div className="w-12" />
             </div>
 
-            <div className="grid min-h-[420px] md:grid-cols-[190px_1fr]">
-              {/* fake sidebar */}
-              <div className="hidden border-r border-border p-4 md:block">
-                <div className="mb-5 h-7 rounded-md bg-muted" />
-
-                <div className="space-y-1">
-                  <div className="rounded-lg bg-muted px-3 py-2 text-xs">
-                    New conversation
-                  </div>
-                  <div className="px-3 py-2 text-xs text-muted-foreground">
-                    Research Agent
-                  </div>
-                  <div className="px-3 py-2 text-xs text-muted-foreground">
-                    Coding Agent
-                  </div>
-                  <div className="px-3 py-2 text-xs text-muted-foreground">
-                    Writer
-                  </div>
+            <div className="grid min-h-[390px] md:grid-cols-[205px_1fr]">
+              <aside className="hidden border-r border-border p-4 md:block">
+                <div className="mb-6 flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.15em] text-muted-foreground">
+                  Your agents
+                  <span>03</span>
                 </div>
-              </div>
-
-              {/* fake chat */}
-              <div className="relative flex flex-col">
-                <div className="flex items-center justify-between border-b border-border px-5 py-3">
-                  <div className="flex items-center gap-2 text-xs font-medium">
-                    <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <Bot className="size-3.5" />
-                    </span>
-                    Research Agent
-                  </div>
-
-                  <span className="text-[10px] text-muted-foreground">
+                <div className="space-y-1">
+                  {[
+                    ["Research Agent", "01", true],
+                    ["Coding Agent", "02", false],
+                    ["Writer", "03", false],
+                  ].map(([name, number, active]) => (
+                    <div
+                      key={name}
+                      className={`flex items-center gap-2.5 px-2.5 py-3 text-xs ${
+                        active
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      <span
+                        className={`size-1.5 rounded-full ${
+                          active ? "bg-primary" : "bg-border"
+                        }`}
+                      />
+                      <span className="flex-1">{name}</span>
+                      <span className="font-mono text-[9px] opacity-60">
+                        {number}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-8 border-t border-border pt-4 font-mono text-[9px] uppercase tracking-[0.15em] text-muted-foreground">
+                  Current model
+                  <p className="mt-2 font-sans text-xs normal-case tracking-normal text-foreground">
                     Claude · GPT · Gemini
+                  </p>
+                </div>
+              </aside>
+
+              <div className="flex min-w-0 flex-col">
+                <div className="flex items-center justify-between border-b border-border px-4 py-3 sm:px-6">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-8 items-center justify-center bg-primary text-primary-foreground">
+                      <Bot className="size-4" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-medium">Research Agent</p>
+                      <p className="mt-0.5 font-mono text-[9px] text-muted-foreground">
+                        FOCUSED ON DEEP RESEARCH
+                      </p>
+                    </div>
+                  </div>
+                  <span className="font-mono text-[9px] text-muted-foreground">
+                    MODEL / SONNET
                   </span>
                 </div>
 
-                <div className="flex-1 space-y-7 p-6 sm:p-10">
-                  <div className="ml-auto max-w-[70%]">
-                    <div className="rounded-2xl rounded-tr-md bg-primary px-4 py-3 text-xs leading-5 text-primary-foreground">
-                      Analyze the latest trends in AI agent infrastructure and
-                      summarize the key opportunities.
-                    </div>
+                <div className="flex-1 space-y-7 px-4 py-6 sm:px-8 sm:py-9">
+                  <div className="ml-auto max-w-[78%] border border-primary/20 bg-primary/[0.07] px-4 py-3 text-xs leading-5">
+                    Analyze the latest trends in AI agent infrastructure and
+                    summarize the key opportunities.
                   </div>
 
-                  <div className="flex max-w-[80%] gap-3">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
+                  <div className="flex max-w-[90%] gap-3">
+                    <span className="flex size-7 shrink-0 items-center justify-center border border-border">
                       <Bot className="size-3.5" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="text-xs leading-5 text-muted-foreground">
-                        I&apos;ll research the current landscape across
-                        infrastructure, orchestration, and model providers.
-                      </div>
-
-                      <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/30 px-3 py-2">
-                        <Zap className="size-3 text-primary" />
-                        <span className="text-[10px] text-muted-foreground">
-                          Researching multiple sources...
-                        </span>
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs leading-5 text-muted-foreground">
+                        I&apos;ll research the landscape across infrastructure,
+                        orchestration, and model providers.
+                      </p>
+                      <div className="mt-4 border-l-2 border-primary py-1 pl-3">
+                        <div className="flex items-center gap-2">
+                          <Zap className="size-3 text-primary" />
+                          <span className="font-mono text-[10px] text-muted-foreground">
+                            RESEARCHING MULTIPLE SOURCES
+                          </span>
+                        </div>
+                        <div className="mt-2 h-px w-36 bg-border">
+                          <div className="h-px w-2/3 bg-primary" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-border p-4">
-                  <div className="flex h-10 items-center rounded-xl border border-border bg-background px-3 text-xs text-muted-foreground">
-                    Ask anything...
+                <div className="border-t border-border p-3 sm:p-4">
+                  <div className="flex min-h-11 items-center justify-between border border-border px-3 text-xs text-muted-foreground">
+                    <span>Ask anything…</span>
+                    <span className="font-mono text-[9px]">↵ SEND</span>
                   </div>
                 </div>
               </div>

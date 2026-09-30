@@ -37,64 +37,62 @@ export function WorkflowSection() {
   return (
     <section
       id="workflow"
-      className="border-y border-border/60 bg-muted/20 py-28 sm:py-36"
+      className="border-y border-border bg-muted/20 py-24 sm:py-32"
     >
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mx-auto max-w-2xl text-center"
+          className="grid gap-7 border-b border-border pb-8 md:grid-cols-[1fr_0.7fr] md:items-end"
         >
-          <p className="mb-4 text-sm font-medium text-primary">
-            Simple by design
-          </p>
-
-          <h2 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-            From idea to agent in minutes.
-          </h2>
-
-          <p className="mt-5 text-base leading-7 text-muted-foreground">
+          <div>
+            <p className="mb-5 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-primary">
+              <span className="h-px w-7 bg-primary" />
+              Simple by design
+            </p>
+            <h2 className="text-4xl font-semibold leading-[1.04] tracking-[-0.055em] sm:text-5xl">
+              From idea to agent in minutes.
+            </h2>
+          </div>
+          <p className="max-w-lg text-sm leading-6 text-muted-foreground md:justify-self-end">
             Vangrex turns the complexity of the AI stack into a workflow you can
             actually reason about.
           </p>
         </motion.div>
 
-        <div className="mt-16 grid gap-4 md:grid-cols-4">
+        <div className="mt-5 grid md:grid-cols-4">
           {steps.map((step, index) => {
             const Icon = step.icon;
 
             return (
-              <motion.div
+              <motion.article
                 key={step.number}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-                className="relative"
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ delay: index * 0.075 }}
+                className="group relative border-b border-border py-6 md:border-b-0 md:border-r md:px-5 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
               >
-                <div className="rounded-2xl border border-border bg-background p-6">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-muted-foreground">
-                      {step.number}
-                    </span>
-
-                    <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Icon className="size-4" />
-                    </div>
-                  </div>
-
-                  <h3 className="mt-10 text-sm font-medium">{step.title}</h3>
-
-                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                    {step.description}
-                  </p>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-primary">
+                    {step.number}
+                  </span>
+                  <Icon className="size-[18px] text-muted-foreground transition-colors group-hover:text-primary" />
                 </div>
-
-                {index < steps.length - 1 && (
-                  <ArrowDown className="absolute -bottom-3 left-1/2 z-10 size-4 -translate-x-1/2 text-muted-foreground md:-right-3 md:left-auto md:top-1/2 md:translate-x-1/2 md:rotate-[-90deg]" />
-                )}
-              </motion.div>
+                <div className="mt-8 flex items-center gap-3">
+                  <h3 className="text-base font-medium">{step.title}</h3>
+                  {index < steps.length - 1 && (
+                    <ArrowDown className="size-3.5 text-primary md:hidden" />
+                  )}
+                </div>
+                <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">
+                  {step.description}
+                </p>
+                <div className="mt-7 h-px w-full bg-border">
+                  <div className="h-px w-0 bg-primary transition-all duration-500 group-hover:w-full" />
+                </div>
+              </motion.article>
             );
           })}
         </div>
