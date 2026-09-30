@@ -2,19 +2,14 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* -------------------------------------------------------------------------- */
-/* VANGREX                                                                    */
-/* -------------------------------------------------------------------------- */
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-sans: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif);
+  --font-mono: var(--font-geist-mono, "Geist Mono", ui-monospace, monospace);
+  --font-heading: var(--font-geist-sans, Geist, ui-sans-serif, system-ui, sans-serif);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -34,24 +29,17 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
-
   --color-destructive: var(--destructive);
-
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
-
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
-
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
-
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
-
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
-
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
@@ -64,140 +52,103 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* -------------------------------------------------------------------------- */
-/* LIGHT                                                                       */
-/* -------------------------------------------------------------------------- */
-
 :root {
-  --radius: 0.7rem;
+  color-scheme: light;
+  --radius: 0.75rem;
 
-  /*
-   * Vangrex brand accents
-   *
-   * violet / indigo = intelligence
-   * cyan             = execution / activity
-   */
-  --vangrex-violet: oklch(0.57 0.29 285);
-  --vangrex-indigo: oklch(0.55 0.25 275);
-  --vangrex-cyan: oklch(0.72 0.19 195);
+  /* Vangrex Living Blueprint palette */
+  --chalk: #f5f6f2;
+  --paper: #ffffff;
+  --graphite: #20231f;
+  --slate: #626860;
+  --rule: #d9ddd5;
+  --mist: #e9ece6;
+  --signal: #c5e86c;
+  --signal-ink: #28311a;
 
-  --background: oklch(0.985 0.004 270);
-  --foreground: oklch(0.145 0.015 270);
+  /* shadcn semantic tokens */
+  --background: var(--chalk);
+  --foreground: var(--graphite);
+  --card: var(--paper);
+  --card-foreground: var(--graphite);
+  --popover: var(--paper);
+  --popover-foreground: var(--graphite);
+  --primary: var(--signal);
+  --primary-foreground: var(--signal-ink);
+  --secondary: var(--mist);
+  --secondary-foreground: var(--graphite);
+  --muted: #f0f2ed;
+  --muted-foreground: var(--slate);
+  --accent: var(--mist);
+  --accent-foreground: var(--graphite);
+  --destructive: #ba1a1a;
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--graphite);
 
-  --card: oklch(0.995 0.002 270);
-  --card-foreground: oklch(0.145 0.015 270);
+  /* Charts stay within the neutral system and single Signal accent. */
+  --chart-1: var(--graphite);
+  --chart-2: var(--signal);
+  --chart-3: var(--slate);
+  --chart-4: #aeb3aa;
+  --chart-5: #d5d9d1;
 
-  --popover: oklch(0.995 0.002 270);
-  --popover-foreground: oklch(0.145 0.015 270);
+  --sidebar: var(--chalk);
+  --sidebar-foreground: var(--graphite);
+  --sidebar-primary: var(--signal);
+  --sidebar-primary-foreground: var(--signal-ink);
+  --sidebar-accent: var(--mist);
+  --sidebar-accent-foreground: var(--graphite);
+  --sidebar-border: var(--rule);
+  --sidebar-ring: var(--graphite);
 
-  --primary: oklch(0.52 0.25 277);
-  --primary-foreground: oklch(0.985 0 0);
-
-  --secondary: oklch(0.955 0.012 270);
-  --secondary-foreground: oklch(0.2 0.02 270);
-
-  --muted: oklch(0.955 0.01 270);
-  --muted-foreground: oklch(0.49 0.025 270);
-
-  --accent: oklch(0.94 0.025 270);
-  --accent-foreground: oklch(0.2 0.025 270);
-
-  --destructive: oklch(0.58 0.24 27);
-
-  --border: oklch(0.89 0.018 270);
-  --input: oklch(0.89 0.018 270);
-  --ring: oklch(0.58 0.22 280);
-
-  --chart-1: oklch(0.57 0.29 285);
-  --chart-2: oklch(0.72 0.19 195);
-  --chart-3: oklch(0.62 0.21 250);
-  --chart-4: oklch(0.65 0.18 310);
-  --chart-5: oklch(0.58 0.16 170);
-
-  --sidebar: oklch(0.975 0.006 270);
-  --sidebar-foreground: oklch(0.145 0.015 270);
-  --sidebar-primary: oklch(0.52 0.25 277);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.94 0.018 270);
-  --sidebar-accent-foreground: oklch(0.2 0.02 270);
-  --sidebar-border: oklch(0.89 0.018 270);
-  --sidebar-ring: oklch(0.58 0.22 280);
+  /* Direct-use brand aliases */
+  --color-chalk: var(--chalk);
+  --color-paper: var(--paper);
+  --color-graphite: var(--graphite);
+  --color-slate: var(--slate);
+  --color-rule: var(--rule);
+  --color-mist: var(--mist);
+  --color-signal: var(--signal);
+  --color-signal-ink: var(--signal-ink);
 }
-
-/* -------------------------------------------------------------------------- */
-/* DARK — VANGREX DEFAULT                                                      */
-/* -------------------------------------------------------------------------- */
 
 .dark {
-  /*
-   * The important part:
-   *
-   * Don't use pure #000.
-   * Vangrex lives in a slightly blue/violet black.
-   */
-  --background: oklch(0.105 0.018 275);
-  --foreground: oklch(0.965 0.008 270);
+  color-scheme: dark;
+  --background: var(--graphite);
+  --foreground: var(--chalk);
+  --card: #2e312f;
+  --card-foreground: var(--chalk);
+  --popover: #2e312f;
+  --popover-foreground: var(--chalk);
+  --primary: var(--signal);
+  --primary-foreground: var(--signal-ink);
+  --secondary: #343833;
+  --secondary-foreground: var(--chalk);
+  --muted: #2b2e2b;
+  --muted-foreground: #c5c9c1;
+  --accent: #343833;
+  --accent-foreground: var(--chalk);
+  --destructive: #ffb4ab;
+  --border: rgb(217 221 213 / 18%);
+  --input: rgb(217 221 213 / 22%);
+  --ring: var(--signal);
 
-  --card: oklch(0.135 0.022 275);
-  --card-foreground: oklch(0.965 0.008 270);
+  --chart-1: var(--chalk);
+  --chart-2: var(--signal);
+  --chart-3: #b9beb6;
+  --chart-4: #858b82;
+  --chart-5: #555b53;
 
-  --popover: oklch(0.145 0.025 275);
-  --popover-foreground: oklch(0.965 0.008 270);
-
-  /*
-   * Primary = the logo's violet/indigo side.
-   */
-  --primary: oklch(0.63 0.25 280);
-  --primary-foreground: oklch(0.985 0 0);
-
-  --secondary: oklch(0.19 0.025 275);
-  --secondary-foreground: oklch(0.93 0.01 270);
-
-  --muted: oklch(0.18 0.022 275);
-  --muted-foreground: oklch(0.62 0.025 270);
-
-  /*
-   * Accent is intentionally cyan-ish.
-   * Use this for active states, indicators and execution.
-   */
-  --accent: oklch(0.21 0.035 260);
-  --accent-foreground: oklch(0.94 0.025 205);
-
-  --destructive: oklch(0.68 0.19 24);
-
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 11%);
-
-  --ring: oklch(0.67 0.22 280);
-
-  /*
-   * Charts follow the Vangrex spectrum.
-   */
-  --chart-1: oklch(0.63 0.25 280);
-  --chart-2: oklch(0.73 0.19 195);
-  --chart-3: oklch(0.63 0.21 250);
-  --chart-4: oklch(0.68 0.2 315);
-  --chart-5: oklch(0.67 0.17 165);
-
-  /*
-   * Sidebar is deliberately darker than cards.
-   */
-  --sidebar: oklch(0.085 0.016 275);
-  --sidebar-foreground: oklch(0.94 0.008 270);
-
-  --sidebar-primary: oklch(0.63 0.25 280);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-
-  --sidebar-accent: oklch(0.17 0.028 275);
-  --sidebar-accent-foreground: oklch(0.94 0.01 270);
-
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.67 0.22 280);
+  --sidebar: #1a1c1a;
+  --sidebar-foreground: var(--chalk);
+  --sidebar-primary: var(--signal);
+  --sidebar-primary-foreground: var(--signal-ink);
+  --sidebar-accent: #2b2e2b;
+  --sidebar-accent-foreground: var(--chalk);
+  --sidebar-border: rgb(217 221 213 / 16%);
+  --sidebar-ring: var(--signal);
 }
-
-/* -------------------------------------------------------------------------- */
-/* BASE                                                                        */
-/* -------------------------------------------------------------------------- */
 
 @layer base {
   * {
@@ -213,192 +164,77 @@
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
-
-    /*
-     * Prevent the usual horizontal overflow caused by decorative effects.
-     */
     overflow-x: hidden;
-
-    /*
-     * Slightly better rendering for the dark interface.
-     */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background: oklch(0.63 0.25 280 / 30%);
-    color: var(--foreground);
+    background: var(--signal);
+    color: var(--signal-ink);
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* VANGREX ATMOSPHERE                                                          */
-/* -------------------------------------------------------------------------- */
-
-/*
- * Use this on major page wrappers.
- *
- * It gives the interface a technical environment without making
- * the whole UI look like a gradient template.
- */
+/* Architectural canvas texture: quiet rules, no colored glow. */
 .vangrex-surface {
   position: relative;
   isolation: isolate;
+  background: var(--background);
 }
 
-.vangrex-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      circle at 15% 0%,
-      oklch(0.55 0.25 280 / 9%),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 90% 15%,
-      oklch(0.72 0.19 195 / 7%),
-      transparent 28%
-    );
-}
-
-/*
- * Very subtle technical grid.
- *
- * Don't make this stronger than this.
- */
 .vangrex-grid {
   background-image:
-    linear-gradient(oklch(1 0 0 / 2.5%) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(1 0 0 / 2.5%) 1px, transparent 1px);
-
+    linear-gradient(rgb(98 104 96 / 7%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(98 104 96 / 7%) 1px, transparent 1px);
   background-size: 48px 48px;
-
-  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
 }
-
-/* -------------------------------------------------------------------------- */
-/* BRAND GLOW                                                                  */
-/* -------------------------------------------------------------------------- */
-
-.vangrex-glow {
-  box-shadow:
-    0 0 0 1px oklch(0.63 0.25 280 / 10%),
-    0 0 45px oklch(0.63 0.25 280 / 8%);
-}
-
-.vangrex-glow-cyan {
-  box-shadow:
-    0 0 0 1px oklch(0.72 0.19 195 / 10%),
-    0 0 45px oklch(0.72 0.19 195 / 8%);
-}
-
-/*
- * Used for tiny active indicators.
- */
-.vangrex-pulse {
-  box-shadow: 0 0 0 0 oklch(0.72 0.19 195 / 40%);
-  animation: vangrex-pulse 2.4s ease-out infinite;
-}
-
-@keyframes vangrex-pulse {
-  70% {
-    box-shadow: 0 0 0 7px oklch(0.72 0.19 195 / 0%);
-  }
-
-  100% {
-    box-shadow: 0 0 0 0 oklch(0.72 0.19 195 / 0%);
-  }
-}
-
-/* -------------------------------------------------------------------------- */
-/* BRAND GRADIENT                                                              */
-/* -------------------------------------------------------------------------- */
-
-/*
- * This is the logo-inspired gradient.
- *
- * Important:
- * Don't use this for every button.
- * Reserve it for brand moments.
- */
-.vangrex-gradient {
-  background: linear-gradient(
-    115deg,
-    oklch(0.58 0.29 285) 0%,
-    oklch(0.56 0.25 275) 42%,
-    oklch(0.72 0.19 195) 100%
-  );
-}
-
-.vangrex-gradient-text {
-  background: linear-gradient(
-    110deg,
-    oklch(0.72 0.25 285),
-    oklch(0.61 0.25 275) 45%,
-    oklch(0.73 0.19 195)
-  );
-
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-/* -------------------------------------------------------------------------- */
-/* HAIRLINE / TECHNICAL UI                                                     */
-/* -------------------------------------------------------------------------- */
 
 .vangrex-hairline {
-  position: relative;
+  border-bottom: 1px solid var(--border);
 }
 
-.vangrex-hairline::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    oklch(0.63 0.25 280 / 25%),
-    oklch(0.72 0.19 195 / 20%),
-    transparent
-  );
-}
-
-/*
- * Good for cards that need a slightly more premium edge.
- */
 .vangrex-card {
-  background:
-    linear-gradient(180deg, oklch(1 0 0 / 3%), transparent), var(--card);
-
-  border: 1px solid oklch(1 0 0 / 8%);
-
-  box-shadow:
-    0 1px 2px oklch(0 0 0 / 20%),
-    0 12px 40px oklch(0 0 0 / 12%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgb(32 35 31 / 3%), 0 12px 40px rgb(32 35 31 / 6%);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .vangrex-card:hover {
-  border-color: oklch(0.63 0.25 280 / 20%);
-
-  box-shadow:
-    0 1px 2px oklch(0 0 0 / 20%),
-    0 16px 50px oklch(0.25 0.15 280 / 12%);
+  border-color: #c5c9c1;
+  box-shadow: 0 3px 12px rgb(32 35 31 / 6%);
+  transform: translateY(-2px);
 }
 
-/* -------------------------------------------------------------------------- */
-/* SCROLLBAR                                                                   */
-/* -------------------------------------------------------------------------- */
+.vangrex-node-selected {
+  border: 2px solid var(--signal);
+}
+
+.vangrex-button {
+  background: var(--signal);
+  color: var(--signal-ink);
+  border-radius: 12px;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+.vangrex-button:hover {
+  transform: translateY(-1px);
+}
+
+.vangrex-button:active {
+  transform: translateY(1px);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -410,26 +246,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(1 0 0 / 10%);
+  background: #aeb3aa;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(1 0 0 / 17%);
+  background: var(--slate);
 }
-
-/* -------------------------------------------------------------------------- */
-/* FOCUS                                                                       */
-/* -------------------------------------------------------------------------- */
-
-:focus-visible {
-  outline: 2px solid oklch(0.67 0.22 280 / 65%);
-  outline-offset: 2px;
-}
-
-/* -------------------------------------------------------------------------- */
-/* REDUCED MOTION                                                              */
-/* -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,
